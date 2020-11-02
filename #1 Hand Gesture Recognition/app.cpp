@@ -130,15 +130,17 @@ void track(int, void*) {
                     rand(); //·£´ýÇÔ¼ö
 
                     int A, B; //¼±ÈÄÀ§ÇÑ º¯¼ö
+                    Mat pic;
 
-                    putText(image, "ÁØºñ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    putText(pic, "ÁØºñ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                     waitKey(10);
-                    putText(image, "½ÃÀÛ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    putText(pic, "½ÃÀÛ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                     waitKey(10);
 
                     int com = rand() % 3 + 1; //·£´ý ÄÄÇ»ÅÍ ¹¬Âîºü °áÁ¤.
 
                      //»ç¿ëÀÚ ¹¬Âîºü ÀÔ·Â¹Þ±â
+
                     int user;
 
                     while (1) {
@@ -149,30 +151,28 @@ void track(int, void*) {
                         else if (count == 5)
                             user = 2;
                         else
-                            strcpy_s(a, "ÀÎ½ÄÇÒ ¼ö ¾ø½À´Ï´Ù.");
-                            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                             continue;
                     }
 
                     switch (com) {
                     case 0: {
-                        image = imread("¹¬.png", 1);
+                        pic = imread("¹¬.png", 1);
                         namedWindow("¹¬");
-                        imshow("¹¬", image);
+                        imshow("¹¬", pic);
                         waitKey(20);
                         break;
                     }
                     case 1: {
-                        image = imread("Âî.png", 1);
+                        pic = imread("Âî.png", 1);
                         namedWindow("Âî");
-                        imshow("Âî", image);
+                        imshow("Âî", pic);
                         waitKey(20);
                         break;
                     }
                     case 2: {
-                        image = imread("ºü.png", 1);
+                        pic = imread("ºü.png", 1);
                         namedWindow("ºü");
-                        imshow("ºü", image);
+                        imshow("ºü", pic);
                         waitKey(20);
                         break;
                     }
@@ -201,14 +201,14 @@ void track(int, void*) {
                                 else
                                     continue;
                             }
-                            putText(image, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            putText(pic, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                             //cout << "¹«½ÂºÎ";
                         }
                     }
 
                     while (1) {
                         if (A == 1 && B == 0) {
-                            putText(image, "´ç½ÅÀÇ °ø°Ý", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            putText(pic, "´ç½ÅÀÇ °ø°Ý", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                             //cout << "À¯Àú °ø°Ý";
                             com = rand() % 3 + 1;
 
@@ -225,30 +225,30 @@ void track(int, void*) {
 
                             switch (com) {
                             case 0: {
-                                image = imread("¹¬.png", 1);
+                                pic = imread("¹¬.png", 1);
                                 namedWindow("¹¬");
-                                imshow("¹¬", image);
+                                imshow("¹¬", pic);
                                 waitKey(20);
                                 break;
                             }
                             case 1: {
-                                image = imread("Âî.png", 1);
+                                pic = imread("Âî.png", 1);
                                 namedWindow("Âî");
-                                imshow("Âî", image);
+                                imshow("Âî", pic);
                                 waitKey(20);
                                 break;
                             }
                             case 2: {
-                                image = imread("ºü.png", 1);
+                                pic = imread("ºü.png", 1);
                                 namedWindow("ºü");
-                                imshow("ºü", image);
+                                imshow("ºü", pic);
                                 waitKey(20);
                                 break;
                             }
                             }
 
                             if (user == com) {
-                                putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                putText(pic, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                                 //cout << "winner";
                             }
                             else {
@@ -265,13 +265,13 @@ void track(int, void*) {
                                         continue;
                                 }
                                 A == 1 && B == 0;
-                                putText(image, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                putText(pic, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                                 //cout << "´Ù½Ã";
                                 continue;
                             }
                         }
                         else {
-                            putText(image, "ÄÄ °ø°Ý", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            putText(pic, "ÄÄ °ø°Ý", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                             //cout << "ÄÄ °ø°Ý";
                             com = rand() % 3 + 1;
 
@@ -288,30 +288,30 @@ void track(int, void*) {
 
                             switch (com) {
                             case 0: {
-                                image = imread("¹¬.png", 1);
+                                pic = imread("¹¬.png", 1);
                                 namedWindow("¹¬");
-                                imshow("¹¬", image);
+                                imshow("¹¬", pic);
                                 waitKey(20);
                                 break;
                             }
                             case 1: {
-                                image = imread("Âî.png", 1);
+                                pic = imread("Âî.png", 1);
                                 namedWindow("Âî");
-                                imshow("Âî", image);
+                                imshow("Âî", pic);
                                 waitKey(20);
                                 break;
                             }
                             case 2: {
-                                image = imread("ºü.png", 1);
+                                pic = imread("ºü.png", 1);
                                 namedWindow("ºü");
-                                imshow("ºü", image);
+                                imshow("ºü", pic);
                                 waitKey(20);
                                 break;
                             }
                             }
 
                             if (user == com) {
-                                putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                putText(pic, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                                 //cout << "loser";
                             }
                             else {
@@ -328,7 +328,7 @@ void track(int, void*) {
                                         continue;
                                 }
                                 A == 0 && B == 1;
-                                putText(image, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                putText(pic, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                                 //cout << "´Ù½Ã";
                                 continue;
                             }

@@ -17,15 +17,18 @@ int game(int user)
     rand(); //랜덤함수
 
     int A, B; //선후위한 변수
+    Mat pic;
 
-    putText(image, "준비", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-    waitkey(10);
-    putText(image, "시작", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-    waitkey(10);
+    putText(pic, "준비", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+    waitKey(10);
+    putText(pic, "시작", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+    waitKey(10);
 
     int com = rand() % 3 + 1; //랜덤 컴퓨터 묵찌빠 결정.
 
      //사용자 묵찌빠 입력받기
+
+    int user;
 
     while (1) {
         if (count == 0)
@@ -40,24 +43,24 @@ int game(int user)
    
     switch (com) {
     case 0: {
-        image = imread("묵.png", 1);
+        pic = imread("묵.png", 1);
         namedWindow("묵");
-        imshow("묵", image);
-        waitkey(20);
+        imshow("묵", pic);
+        waitKey(20);
         break;
     }
     case 1: {
-        image = imread("찌.png", 1);
+        pic = imread("찌.png", 1);
         namedWindow("찌");
-        imshow("찌", image);
-        waitkey(20);
+        imshow("찌", pic);
+        waitKey(20);
         break;
     }
     case 2: {
-        image = imread("빠.png", 1);
+        pic = imread("빠.png", 1);
         namedWindow("빠");
-        imshow("빠", image);
-        waitkey(20);
+        imshow("빠", pic);
+        waitKey(20);
         break;
     }
     }
@@ -85,14 +88,14 @@ int game(int user)
                 else
                     continue;
             }
-            putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            putText(pic, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
             //cout << "무승부";
         }
     }
 
     while (1) {
         if (A == 1 && B == 0) {
-            putText(image, "당신의 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            putText(pic, "당신의 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
             //cout << "유저 공격";
             com = rand() % 3 + 1;
 
@@ -109,30 +112,30 @@ int game(int user)
 
             switch (com) {
             case 0: {
-                image = imread("묵.png", 1);
+                pic = imread("묵.png", 1);
                 namedWindow("묵");
-                imshow("묵", image);
-                waitkey(20);
+                imshow("묵", pic);
+                waitKey(20);
                 break;
             }
             case 1: {
-                image = imread("찌.png", 1);
+                pic = imread("찌.png", 1);
                 namedWindow("찌");
-                imshow("찌", image);
-                waitkey(20);
+                imshow("찌", pic);
+                waitKey(20);
                 break;
             }
             case 2: {
-                image = imread("빠.png", 1);
+                pic = imread("빠.png", 1);
                 namedWindow("빠");
-                imshow("빠", image);
-                waitkey(20);
+                imshow("빠", pic);
+                waitKey(20);
                 break;
             }
             }
 
             if (user == com) {
-                putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(pic, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "winner";
             }
             else {
@@ -149,13 +152,13 @@ int game(int user)
                         continue;
                 }
                 A == 1 && B == 0;
-                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(pic, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "다시";
                 continue;
             }
         }
         else{
-            putText(image, "컴 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            putText(pic, "컴 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
             //cout << "컴 공격";
             com = rand() % 3 + 1;
 
@@ -172,30 +175,30 @@ int game(int user)
 
             switch (com) {
             case 0: {
-                image = imread("묵.png", 1);
+                pic = imread("묵.png", 1);
                 namedWindow("묵");
-                imshow("묵", image);
-                waitkey(20);
+                imshow("묵", pic);
+                waitKey(20);
                 break;
             }
             case 1: {
-                image = imread("찌.png", 1);
+                pic = imread("찌.png", 1);
                 namedWindow("찌");
-                imshow("찌", image);
-                waitkey(20);
+                imshow("찌", pic);
+                waitKey(20);
                 break;
             }
             case 2: {
-                image = imread("빠.png", 1);
+                pic = imread("빠.png", 1);
                 namedWindow("빠");
-                imshow("빠", image);
-                waitkey(20);
+                imshow("빠", pic);
+                waitKey(20);
                 break;
             }
             }
 
             if (user == com) {
-                putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(pic, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "loser";
             }
             else {
@@ -212,7 +215,7 @@ int game(int user)
                         continue;
                 }
                 A == 0 && B == 1;
-                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(pic, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "다시";
                 continue;
             }
