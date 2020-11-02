@@ -11,12 +11,15 @@
 using namespace cv;
 using namespace std;
 
-Mat cam, med1, med2;	// rgb to gray, hsv, ycbcr의 y 중 어떤 
-Mat image;
+void track(int, void*);
+Mat cam, med;	// cam=orjinalGoruntu, med=med
+Mat masked;	//=masked
+Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main 화면=image
+int game(int user);	// 묵찌빠
 
 int main(int argc, char** argv) {
 	
-	Rect handrect(288, 12, 288, 288);	// 손을 넣어야 할 직사각형
+	Rect handrect(288, 80, 288, 288);	// 손을 넣어야 할 직사각형 =myRoi
 	Mat element = getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1));	// 
 	
 
@@ -28,19 +31,22 @@ int main(int argc, char** argv) {
 
 	while (1){
 		cap >> cam;
-		flip(cam, med1, 1);
-		cvtColor(med1, med2, COLOR_RGB2GRAY);
+		flip(cam, image, 1);
+		rectangle(image, handrect, Scalar(0, 0, 255));
+		idk = image(handrect);
+		cvtColor(idk, med, COLOR_RGB2GRAY);
 		// mask = erode(mask, skinkernel, iterations = 1)
 		// mask = dilate(mask, skinkernel, iterations = 1)
-		GaussianBlur(med2, med2, Size(23, 23), 0);
-		/* cvtColor(med1, med2, COLOR_RGB2HSV);	// HSV
-		GaussianBlur(med2, med2, Size(23, 23), 0);
-		cvtColor(med1, med2, COLOR_RGB2YCrCb);	// YCbCr
-		GaussianBlur(med2, med2, Size(23, 23), 0); */
-
+		GaussianBlur(med, med, Size(23, 23), 0);
+		/* cvtColor(med1, med, COLOR_RGB2HSV);	// HSV model
+		GaussianBlur(med, med, Size(23, 23), 0);
+		cvtColor(med1, med, COLOR_RGB2YCrCb);	// YCbCr model
+		GaussianBlur(med, med, Size(23, 23), 0); */
+		pMOG2->apply(idk, masked);
 
 		track(0, 0);
-		imshow("camera img", cam);
+		imshow("묵찌빠 게임", image);
+		imshow("Blurred", med);
 		if (waitKey(1) == 27)
 			break;
 	}
@@ -53,15 +59,15 @@ void track(int, void*) {
 	char a[40];
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
-	//threshold(fgMaskMOG2, or2, thresh, maxVal, type);
-	//GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(11, 11), 3.5, 3.5);
-	//threshold(fgMaskMOG2, or2, 10, 255, THRESH_OTSU);
-	GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(27, 27), 3.5, 3.5);
-	threshold(fgMaskMOG2, fgMaskMOG2, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
-	//Canny(or2, kenarlar, deger, deger * 2, 3);
-	Canny(fgMaskMOG2, kenarlar, deger, deger * 2, 3); //OR2
-	findContours(fgMaskMOG2, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
-	Mat cizim = Mat::zeros(kenarlar.size(), CV_8UC3); //kenarlar.size() or2.size()
+	//threshold(masked, or2, thresh, maxVal, type);
+	//GaussianBlur(masked, masked, Size(11, 11), 3.5, 3.5);
+	//threshold(masked, or2, 10, 255, THRESH_OTSU);
+	GaussianBlur(masked, masked, Size(27, 27), 3.5, 3.5);
+	threshold(masked, masked, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
+	//Canny(or2, cannied, deger, deger * 2, 3);
+	Canny(masked, cannied, deger, deger * 2, 3); //OR2
+	findContours(masked, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
+	Mat handline = Mat::zeros(cannied.size(), CV_8UC3); //cannied.size() or2.size()
 	if (contours.size() > 0) {
 		size_t indexOfBiggestContour = -1;
 		size_t sizeOfBiggestContour = 0;
@@ -71,13 +77,13 @@ void track(int, void*) {
 				indexOfBiggestContour = i;
 			}
 		}
-		vector<vector<int> >hull(contours.size());
-		vector<vector<Point> >hullPoint(contours.size()); // 손의 움직임에 따라 손을 감싸는 다각형
+		vector<vector<int> > hull(contours.size());
+		vector<vector<Point> > hullPoint(contours.size()); // 손의 움직임에 따라 손을 감싸는 다각형
 		vector<vector<Vec4i> > defects(contours.size()); // 손가락 끝의 녹색 점 .. 다차원 매트릭스
-		vector<vector<Point> >defectPoint(contours.size()); // 손가락 끝점 x, y를 점으로 유지
-		vector<vector<Point> >contours_poly(contours.size()); // 손을 감싸는 움직일 수있는 직사각형
+		vector<vector<Point> > defectPoint(contours.size()); // 손가락 끝점 x, y를 점으로 유지
+		vector<vector<Point> > contours_poly(contours.size()); // 손을 감싸는 움직일 수있는 직사각형, contour polygon
 		Point2f rect_point[4];
-		vector<RotatedRect>minRect(contours.size());
+		vector<RotatedRect> minRect(contours.size());
 		vector<Rect> boundRect(contours.size());
 		for (size_t i = 0; i < contours.size(); i++) {
 			if (contourArea(contours[i]) > 5000) {
@@ -97,32 +103,34 @@ void track(int, void*) {
 							int p_end = defects[i][k][1];
 							int p_far = defects[i][k][2];
 							defectPoint[i].push_back(contours[i][p_far]);
-							circle(griGoruntu, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
+							circle(med, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
 							count++;
 						}
 
 					}
 
+					/* 묵찌빠 게임
 					if (count == 0)
-						// mouseevent 묵찌빠 귀납법으로 해야 할 듯?
+						game(0);
 					else if (count == 2)
-						// mouseevent 묵찌빠
+						game(1);
 					else if (count == 5 || count == 6)
-						// mouseevent 묵찌빠
-					else
+						game(2);
+					else {
 						strcpy_s(a, "인식할 수 없습니다.");
+						putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+					}*/
+					
 
-					putText(aynali, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-
-					drawContours(cizim, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
-					drawContours(cizim, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
-					drawContours(griGoruntu, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
+					drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
+					drawContours(handline, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
+					drawContours(med, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
 					approxPolyDP(contours[i], contours_poly[i], 3, false);
 					boundRect[i] = boundingRect(contours_poly[i]);
-					rectangle(griGoruntu, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
+					rectangle(med, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
 					minRect[i].points(rect_point);
 					for (size_t k = 0; k < 4; k++) {
-						line(griGoruntu, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
+						line(med, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
 					}
 
 				}
@@ -133,6 +141,6 @@ void track(int, void*) {
 	}
 
 
-	imshow("Sonuc", cizim);
+	imshow("Contoured image", handline);
 
 }

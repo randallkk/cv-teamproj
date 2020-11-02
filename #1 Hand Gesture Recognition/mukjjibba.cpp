@@ -11,16 +11,14 @@ int game(int user)
 
     int A, B; //선후위한 변수
 
-    putText(aynali, "준비", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+    putText(image, "준비", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
     waitkey(10);
-    putText(aynali, "시작", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+    putText(image, "시작", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
     waitkey(10);
 
     int com = rand() % 3 + 1; //랜덤 컴퓨터 묵찌빠 결정.
 
      //사용자 묵찌빠 입력받기
-
-    int user;
 
     while (1) {
         if (count == 0)
@@ -80,14 +78,14 @@ int game(int user)
                 else
                     continue;
             }
-            putText(aynali, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
             //cout << "무승부";
         }
     }
 
     while (1) {
         if (A == 1 && B == 0) {
-            putText(aynali, "당신의 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            putText(image, "당신의 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
             //cout << "유저 공격";
             com = rand() % 3 + 1;
 
@@ -127,7 +125,7 @@ int game(int user)
             }
 
             if (user == com) {
-                putText(aynali, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "winner";
             }
             else {
@@ -144,13 +142,13 @@ int game(int user)
                         continue;
                 }
                 A == 1 && B == 0;
-                putText(aynali, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "다시";
                 continue;
             }
         }
         else{
-            putText(aynali, "컴 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            putText(image, "컴 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
             //cout << "컴 공격";
             com = rand() % 3 + 1;
 
@@ -190,7 +188,7 @@ int game(int user)
             }
 
             if (user == com) {
-                putText(aynali, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "loser";
             }
             else {
@@ -207,7 +205,7 @@ int game(int user)
                         continue;
                 }
                 A == 0 && B == 1;
-                putText(aynali, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                 //cout << "다시";
                 continue;
             }

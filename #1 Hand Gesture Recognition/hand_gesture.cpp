@@ -14,8 +14,8 @@ using namespace std;
 
 void track(int, void*);
 Mat orjinalGoruntu;
-Mat fgMaskMOG2;
-Mat griGoruntu, kirpik, or2, kenarlar, aynali;
+Mat fgMaskMOG2;	// fgMaskMOG2=masked
+Mat griGoruntu, kirpik, or2, kenarlar, aynali;	//griGoruntu=med, kirpik=idk, aynali=main 화면=image
 int thresh = 140, maxVal = 255;
 int type = 1, deger = 8;
 
@@ -52,9 +52,9 @@ int main() {
 		//cv::flip(fgMaskMOG2, aynali2, 1);
 
 		track(0, 0);
-		imshow("ORJINAL Goruntu", aynali);
-		imshow("ArkaPlan Kaldırıldı", fgMaskMOG2);
-		imshow("Gri", griGoruntu);
+		imshow("ORJINAL Goruntu", aynali);	// =imshow("묵찌빠 게임", image);
+		imshow("ArkaPlan Kaldırıldı", fgMaskMOG2);	//배경제거
+		imshow("Gri", griGoruntu);	// =imshow("Blurred", med2);
 
 
 
@@ -81,7 +81,7 @@ void track(int, void*) {
 	//Canny(or2, kenarlar, deger, deger * 2, 3);
 	Canny(fgMaskMOG2, kenarlar, deger, deger * 2, 3); //OR2
 	findContours(fgMaskMOG2, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
-	Mat cizim = Mat::zeros(kenarlar.size(), CV_8UC3); //kenarlar.size() or2.size()
+	Mat cizim = Mat::zeros(kenarlar.size(), CV_8UC3); //kenarlar.size() or2.size()	= handline
 	if (contours.size() > 0) {
 		size_t indexOfBiggestContour = -1;
 		size_t sizeOfBiggestContour = 0;
