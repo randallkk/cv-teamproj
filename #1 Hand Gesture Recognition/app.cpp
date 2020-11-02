@@ -16,9 +16,14 @@ Mat cam, med;	// cam=orjinalGoruntu, med=med
 Mat masked;	//=masked
 Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main 화면=image
 int game(int user);	// 묵찌빠
+int thresh = 140, maxVal = 255;
+int type = 1, deger = 8;
 
 int main(int argc, char** argv) {
 	
+	Ptr< BackgroundSubtractor> pMOG2;
+	pMOG2 = createBackgroundSubtractorMOG2();
+
 	Rect handrect(288, 80, 288, 288);	// 손을 넣어야 할 직사각형 =myRoi
 	Mat element = getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1));	// 
 	
@@ -121,6 +126,19 @@ void track(int, void*) {
 						putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
 					}*/
 					
+					if (count == 1)
+						strcpy_s(a, "1");
+					else if (count == 2)
+						strcpy_s(a, "2");
+					else if (count == 3)
+						strcpy_s(a, "3");
+					else if (count == 4)
+						strcpy_s(a, "4");
+					else if (count == 5 || count == 6)
+						strcpy_s(a, "5");
+					else
+						strcpy_s(a, "인식할 수 없습니다.");
+
 
 					drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
 					drawContours(handline, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
