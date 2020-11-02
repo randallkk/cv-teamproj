@@ -15,7 +15,8 @@ void track(int, void*);
 Mat cam, med;	// cam=orjinalGoruntu, med=med
 Mat masked;	//=masked
 Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main 화면=image
-int game(int user);	// 묵찌빠
+Mat pic;    // 컴퓨터가 뭐 냈는지
+
 int thresh = 140, maxVal = 255;
 int type = 1, deger = 8;
 
@@ -50,7 +51,6 @@ int main(int argc, char** argv) {
         pMOG2->apply(idk, masked);
 
         track(0, 0);
-        imshow("묵찌빠 게임", image);
         imshow("묵찌빠 게임", image);
         imshow("Blurred", med);
         if (waitKey(1) == 27)
@@ -116,14 +116,20 @@ void track(int, void*) {
                     }
                     int user;
                     // 가위바위보 게임
-                    if (count == 0)
+                    if (count == 0) {
                         user = 0;
-                    else if (count == 2)
+                        strcpy_s(a, "Rock");
+                    }
+                    else if (count == 2) {
                         user = 1;
-                    else if (count == 5)
+                        strcpy_s(a, "Sissors");
+                    }
+                    else if (count == 5) {
                         user = 2;
+                        strcpy_s(a, "Paper");
+                    }
                     else {
-                        strcpy_s(a, "인식할 수 없습니다.");
+                        strcpy_s(a, "Cannot recognized");
                         putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                     }
 
@@ -140,23 +146,23 @@ void track(int, void*) {
 
                     switch (com) {
                     case 0: {
-                        image = imread("묵.png", 1);
+                        pic = imread("묵.png", 1);
                         namedWindow("묵");
-                        imshow("묵", image);
+                        imshow("묵", pic);
                         waitKey(20);
                         break;
                     }
                     case 1: {
-                        image = imread("찌.png", 1);
+                        pic = imread("찌.png", 1);
                         namedWindow("찌");
-                        imshow("찌", image);
+                        imshow("찌", pic);
                         waitKey(20);
                         break;
                     }
                     case 2: {
-                        image = imread("빠.png", 1);
+                        pic = imread("빠.png", 1);
                         namedWindow("빠");
-                        imshow("빠", image);
+                        imshow("빠", pic);
                         waitKey(20);
                         break;
                     }
