@@ -104,21 +104,21 @@ int game(int user)
 
             switch (com) {
             case 0: {
-                image = imread("묵.jpg", 1);
+                image = imread("묵.png", 1);
                 namedWindow("묵");
                 imshow("묵", image);
                 waitkey(20);
                 break;
             }
             case 1: {
-                image = imread("찌.jpg", 1);
+                image = imread("찌.png", 1);
                 namedWindow("찌");
                 imshow("찌", image);
                 waitkey(20);
                 break;
             }
             case 2: {
-                image = imread("빠.jpg", 1);
+                image = imread("빠.png", 1);
                 namedWindow("빠");
                 imshow("빠", image);
                 waitkey(20);
@@ -167,7 +167,7 @@ int game(int user)
 
             switch (com) {
             case 0: {
-                image = imread("묵.jpg", 1);
+                image = imread("묵.png", 1);
                 namedWindow("묵");
                 imshow("묵", image);
                 waitkey(20);
@@ -181,7 +181,7 @@ int game(int user)
                 break;
             }
             case 2: {
-                image = imread("빠.jpg", 1);
+                image = imread("빠.png", 1);
                 namedWindow("빠");
                 imshow("빠", image);
                 waitkey(20);
