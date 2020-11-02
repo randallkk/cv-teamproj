@@ -197,15 +197,24 @@ void track(int, void*) {
                             com = rand() % 3 + 1;
 
                             while (1) {
-                                if (count == 0)
+                                if (count == 0) {
                                     user = 0;
-                                else if (count == 2)
+                                    break;
+                                }
+                                else if (count == 2) {
                                     user = 1;
-                                else if (count == 5)
+                                    break;
+                                }
+                                else if (count == 5) {
                                     user = 2;
+                                    break;
+                                }
                                 else
-                                    continue;
+                                    strcpy_s(a, "인식할 수 없습니다.");
+                                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                continue;
                             }
+
                             putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                             //cout << "무승부";
                         }
@@ -218,14 +227,22 @@ void track(int, void*) {
                             com = rand() % 3 + 1;
 
                             while (1) {
-                                if (count == 0)
+                                if (count == 0) {
                                     user = 0;
-                                else if (count == 2)
+                                    break;
+                                }
+                                else if (count == 2) {
                                     user = 1;
-                                else if (count == 5)
+                                    break;
+                                }
+                                else if (count == 5) {
                                     user = 2;
+                                    break;
+                                }
                                 else
-                                    continue;
+                                    strcpy_s(a, "인식할 수 없습니다.");
+                                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                continue;
                             }
 
                             switch (com) {
@@ -260,15 +277,24 @@ void track(int, void*) {
                                 com = rand() % 3 + 1;
 
                                 while (1) {
-                                    if (count == 0)
+                                    if (count == 0) {
                                         user = 0;
-                                    else if (count == 2)
+                                        break;
+                                    }
+                                    else if (count == 2) {
                                         user = 1;
-                                    else if (count == 5)
+                                        break;
+                                    }
+                                    else if (count == 5) {
                                         user = 2;
+                                        break;
+                                    }
                                     else
-                                        continue;
+                                        strcpy_s(a, "인식할 수 없습니다.");
+                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                    continue;
                                 }
+
                                 A == 1 && B == 0;
                                 putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                                 //cout << "다시";
@@ -281,14 +307,22 @@ void track(int, void*) {
                             com = rand() % 3 + 1;
 
                             while (1) {
-                                if (count == 0)
+                                if (count == 0) {
                                     user = 0;
-                                else if (count == 2)
+                                    break;
+                                }
+                                else if (count == 2) {
                                     user = 1;
-                                else if (count == 5)
+                                    break;
+                                }
+                                else if (count == 5) {
                                     user = 2;
+                                    break;
+                                }
                                 else
-                                    continue;
+                                    strcpy_s(a, "인식할 수 없습니다.");
+                                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                continue;
                             }
 
                             switch (com) {
@@ -323,15 +357,24 @@ void track(int, void*) {
                                 com = rand() % 3 + 1;
 
                                 while (1) {
-                                    if (count == 0)
+                                    if (count == 0) {
                                         user = 0;
-                                    else if (count == 2)
+                                        break;
+                                    }
+                                    else if (count == 2) {
                                         user = 1;
-                                    else if (count == 5)
+                                        break;
+                                    }
+                                    else if (count == 5) {
                                         user = 2;
+                                        break;
+                                    }
                                     else
-                                        continue;
+                                        strcpy_s(a, "인식할 수 없습니다.");
+                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                    continue;
                                 }
+
                                 A == 0 && B == 1;
                                 putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                                 //cout << "다시";
