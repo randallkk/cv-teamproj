@@ -7,125 +7,163 @@ using namespace std;
 int main()
 {
     srand(time(NULL));
-    rand(); //·£´ýÇÔ¼ö
+    rand(); //ëžœë¤í•¨ìˆ˜
 
-    int A, B; //¼±ÈÄÀ§ÇÑ º¯¼ö
-    
-    int com = rand() % 3 + 1; //·£´ý ÄÄÇ»ÅÍ ¹¬Âîºü °áÁ¤.
-    
-    int user; 
-    cin >> user; //»ç¿ëÀÚ ¹¬Âîºü ÀÔ·Â¹Þ±â
+    int A, B; //ì„ í›„ìœ„í•œ ë³€ìˆ˜
 
+
+    
+    
+
+    putText(aynali, "ì¤€ë¹„", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+    waitkey(10);
+    putText(aynali, "ì‹œìž‘", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+    waitkey(10);
+
+    int com = rand() % 3 + 1; //ëžœë¤ ì»´í“¨í„° ë¬µì°Œë¹  ê²°ì •.
+
+
+     //ì‚¬ìš©ìž ë¬µì°Œë¹  ìž…ë ¥ë°›ê¸°
+
+    int user;
+
+    while (1) {
+        if (count == 0)
+            user = 0;
+        else if (count == 2)
+            user = 1;
+        else if (count == 5)
+            user = 2;
+        else
+            continue;
+    }
+   
     switch (com) {
     case 0: {
-        image = imread("¹¬.jpg", 1);
-        namedWindow("¹¬");
-        imshow("¹¬", image);
+        image = imread("ë¬µ.jpg", 1);
+        namedWindow("ë¬µ");
+        imshow("ë¬µ", image);
+        waitkey(20);
         break;
     }
     case 1: {
-        image = imread("Âî.jpg", 1);
-        namedWindow("Âî");
-        imshow("Âî", image);
+        image = imread("ì°Œ.jpg", 1);
+        namedWindow("ì°Œ");
+        imshow("ì°Œ", image);
+        waitkey(20);
         break;
     }
     case 2: {
-        image = imread("ºü.jpg", 1);
-        namedWindow("ºü");
-        imshow("ºü", image);
+        image = imread("ë¹ .jpg", 1);
+        namedWindow("ë¹ ");
+        imshow("ë¹ ", image);
+        waitkey(20);
         break;
     }
     }
 
-    //¼±ÈÄ °áÁ¤ÇÏ±â
+    //ì„ í›„ ê²°ì •í•˜ê¸°
     while (1) {
         if ((user + 1) % 3 == com) {
-            A = 1, B = 0; //À¯Àú °ø°Ý
+            A = 1, B = 0; //ìœ ì € ê³µê²©
             break;
         }
         else if ((com + 1) % 3 == user) {
-            A = 0, B = 1; //ÄÄ °ø°Ý
+            A = 0, B = 1; //ì»´ ê³µê²©
             break;
         }
         else {
             com = rand() % 3 + 1;
             cin >> user;
-            cout << "¹«½ÂºÎ";
+            putText(aynali, "ë‹¤ì‹œ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            //cout << "ë¬´ìŠ¹ë¶€";
         }
     }
 
     while (1) {
         if (A == 1 && B == 0) {
-            cout << "À¯Àú °ø°Ý";
+            putText(aynali, "ë‹¹ì‹ ì˜ ê³µê²©", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            //cout << "ìœ ì € ê³µê²©";
             com = rand() % 3 + 1;
             cin >> user;
 
             switch (com) {
             case 0: {
-                image = imread("¹¬.jpg", 1);
-                namedWindow("¹¬");
-                imshow("¹¬", image);
+                image = imread("ë¬µ.jpg", 1);
+                namedWindow("ë¬µ");
+                imshow("ë¬µ", image);
+                waitkey(20);
                 break;
             }
             case 1: {
-                image = imread("Âî.jpg", 1);
-                namedWindow("Âî");
-                imshow("Âî", image);
+                image = imread("ì°Œ.jpg", 1);
+                namedWindow("ì°Œ");
+                imshow("ì°Œ", image);
+                waitkey(20);
                 break;
             }
             case 2: {
-                image = imread("ºü.jpg", 1);
-                namedWindow("ºü");
-                imshow("ºü", image);
+                image = imread("ë¹ .jpg", 1);
+                namedWindow("ë¹ ");
+                imshow("ë¹ ", image);
+                waitkey(20);
                 break;
             }
             }
 
             if (user == com) {
-                cout << "winner";
+                putText(aynali, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "winner";
             }
             else {
                 com = rand() % 3 + 1;
                 cin >> user;
                 A == 1 && B == 0;
-                cout << "´Ù½Ã";
+                putText(aynali, "ë‹¤ì‹œ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "ë‹¤ì‹œ";
                 continue;
             }
         }
         else{
-            cout << "ÄÄ °ø°Ý";
+            putText(aynali, "ì»´ ê³µê²©", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+            //cout << "ì»´ ê³µê²©";
             com = rand() % 3 + 1;
             cin >> user;
 
             switch (com) {
             case 0: {
-                image = imread("¹¬.jpg", 1);
-                namedWindow("¹¬");
-                imshow("¹¬", image);
+                image = imread("ë¬µ.jpg", 1);
+                namedWindow("ë¬µ");
+                imshow("ë¬µ", image);
+                waitkey(20);
                 break;
             }
             case 1: {
-                image = imread("Âî.jpg", 1);
-                namedWindow("Âî");
-                imshow("Âî", image);
+                image = imread("ì°Œ.jpg", 1);
+                namedWindow("ì°Œ");
+                imshow("ì°Œ", image);
+                waitkey(20);
                 break;
             }
             case 2: {
-                image = imread("ºü.jpg", 1);
-                namedWindow("ºü");
-                imshow("ºü", image);
+                image = imread("ë¹ .jpg", 1);
+                namedWindow("ë¹ ");
+                imshow("ë¹ ", image);
+                waitkey(20);
                 break;
             }
             }
 
             if (user == com) {
-                cout << "loser";
+                putText(aynali, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "loser";
             }
             else {
                 com = rand() % 3 + 1;
                 cin >> user;
                 A == 0 && B == 1;
-                cout << "´Ù½Ã";
+                putText(aynali, "ë‹¤ì‹œ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "ë‹¤ì‹œ";
                 continue;
             }
         }
