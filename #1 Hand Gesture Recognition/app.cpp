@@ -14,178 +14,183 @@ using namespace std;
 void track(int, void*);
 Mat cam, med;	// cam=orjinalGoruntu, med=med
 Mat masked;	//=masked
-Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main È­¸é=image
-int game(int user);	// ¹¬Âîºü
+Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main í™”ë©´=image
+int game(int user);	// ë¬µì°Œë¹ 
 int thresh = 140, maxVal = 255;
 int type = 1, deger = 8;
 
 int main(int argc, char** argv) {
-	
-	Ptr< BackgroundSubtractor> pMOG2;
-	pMOG2 = createBackgroundSubtractorMOG2();
 
-	Rect handrect(288, 80, 288, 288);	// ¼ÕÀ» ³Ö¾î¾ß ÇÒ Á÷»ç°¢Çü =myRoi
-	Mat element = getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1));	// 
-	
+    Ptr< BackgroundSubtractor> pMOG2;
+    pMOG2 = createBackgroundSubtractorMOG2();
 
-	VideoCapture cap(0);	// webcam ¿µ»óÀ» opencv·Î ³Ñ°ÜÁÖ±â
-	if (!cap.isOpened()){
-		printf("Can't open the camera");
-		return -1;
-	}
+    Rect handrect(288, 80, 288, 288);	// ì†ì„ ë„£ì–´ì•¼ í•  ì§ì‚¬ê°í˜• =myRoi
+    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1));	// 
 
-	while (1){
-		cap >> cam;
-		flip(cam, image, 1);
-		rectangle(image, handrect, Scalar(0, 0, 255));
-		idk = image(handrect);
-		cvtColor(idk, med, COLOR_RGB2GRAY);
-		// mask = erode(mask, skinkernel, iterations = 1)
-		// mask = dilate(mask, skinkernel, iterations = 1)
-		GaussianBlur(med, med, Size(23, 23), 0);
-		/* cvtColor(med1, med, COLOR_RGB2HSV);	// HSV model
-		GaussianBlur(med, med, Size(23, 23), 0);
-		cvtColor(med1, med, COLOR_RGB2YCrCb);	// YCbCr model
-		GaussianBlur(med, med, Size(23, 23), 0); */
-		pMOG2->apply(idk, masked);
 
-		track(0, 0);
-		imshow("¹¬Âîºü °ÔÀÓ", image);
-		imshow("Blurred", med);
-		if (waitKey(1) == 27)
-			break;
-	}
+    VideoCapture cap(0);	// webcam ì˜ìƒì„ opencvë¡œ ë„˜ê²¨ì£¼ê¸°
+    if (!cap.isOpened()) {
+        printf("Can't open the camera");
+        return -1;
+    }
 
-	return 0;
+    while (1) {
+        cap >> cam;
+        flip(cam, image, 1);
+        rectangle(image, handrect, Scalar(0, 0, 255));
+        idk = image(handrect);
+        cvtColor(idk, med, COLOR_RGB2GRAY);
+        // mask = erode(mask, skinkernel, iterations = 1)
+        // mask = dilate(mask, skinkernel, iterations = 1)
+        GaussianBlur(med, med, Size(23, 23), 0);
+        /* cvtColor(med1, med, COLOR_RGB2HSV);	// HSV model
+        GaussianBlur(med, med, Size(23, 23), 0);
+        cvtColor(med1, med, COLOR_RGB2YCrCb);	// YCbCr model
+        GaussianBlur(med, med, Size(23, 23), 0); */
+        pMOG2->apply(idk, masked);
+
+        track(0, 0);
+        imshow("ë¬µì°Œë¹  ê²Œì„", image);
+        imshow("Blurred", med);
+        if (waitKey(1) == 27)
+            break;
+    }
+
+    return 0;
 }
 
 void track(int, void*) {
-	int count = 0;
-	char a[40];
-	vector<vector<Point> > contours;
-	vector<Vec4i> hierarchy;
-	//threshold(masked, or2, thresh, maxVal, type);
-	//GaussianBlur(masked, masked, Size(11, 11), 3.5, 3.5);
-	//threshold(masked, or2, 10, 255, THRESH_OTSU);
-	GaussianBlur(masked, masked, Size(27, 27), 3.5, 3.5);
-	threshold(masked, masked, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
-	//Canny(or2, cannied, deger, deger * 2, 3);
-	Canny(masked, cannied, deger, deger * 2, 3); //OR2
-	findContours(masked, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
-	Mat handline = Mat::zeros(cannied.size(), CV_8UC3); //cannied.size() or2.size()
-	if (contours.size() > 0) {
-		size_t indexOfBiggestContour = -1;
-		size_t sizeOfBiggestContour = 0;
-		for (size_t i = 0; i < contours.size(); i++) {
-			if (contours[i].size() > sizeOfBiggestContour) {
-				sizeOfBiggestContour = contours[i].size();
-				indexOfBiggestContour = i;
-			}
-		}
-		vector<vector<int> > hull(contours.size());
-		vector<vector<Point> > hullPoint(contours.size()); // ¼ÕÀÇ ¿òÁ÷ÀÓ¿¡ µû¶ó ¼ÕÀ» °¨½Î´Â ´Ù°¢Çü
-		vector<vector<Vec4i> > defects(contours.size()); // ¼Õ°¡¶ô ³¡ÀÇ ³ì»ö Á¡ .. ´ÙÂ÷¿ø ¸ÅÆ®¸¯½º
-		vector<vector<Point> > defectPoint(contours.size()); // ¼Õ°¡¶ô ³¡Á¡ x, y¸¦ Á¡À¸·Î À¯Áö
-		vector<vector<Point> > contours_poly(contours.size()); // ¼ÕÀ» °¨½Î´Â ¿òÁ÷ÀÏ ¼öÀÖ´Â Á÷»ç°¢Çü, contour polygon
-		Point2f rect_point[4];
-		vector<RotatedRect> minRect(contours.size());
-		vector<Rect> boundRect(contours.size());
-		for (size_t i = 0; i < contours.size(); i++) {
-			if (contourArea(contours[i]) > 5000) {
-				convexHull(contours[i], hull[i], true);
-				convexityDefects(contours[i], hull[i], defects[i]);
-				if (indexOfBiggestContour == i) {
-					minRect[i] = minAreaRect(contours[i]);
-					for (size_t k = 0; k < hull[i].size(); k++) {
-						int ind = hull[i][k];
-						hullPoint[i].push_back(contours[i][ind]);
-					}
-					count = 0;
+    int count = 0;
+    char a[40];
+    vector<vector<Point> > contours;
+    vector<Vec4i> hierarchy;
+    //threshold(masked, or2, thresh, maxVal, type);
+    //GaussianBlur(masked, masked, Size(11, 11), 3.5, 3.5);
+    //threshold(masked, or2, 10, 255, THRESH_OTSU);
+    GaussianBlur(masked, masked, Size(27, 27), 3.5, 3.5);
+    threshold(masked, masked, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
+    //Canny(or2, cannied, deger, deger * 2, 3);
+    Canny(masked, cannied, deger, deger * 2, 3); //OR2
+    findContours(masked, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
+    Mat handline = Mat::zeros(cannied.size(), CV_8UC3); //cannied.size() or2.size()
+    if (contours.size() > 0) {
+        size_t indexOfBiggestContour = -1;
+        size_t sizeOfBiggestContour = 0;
+        for (size_t i = 0; i < contours.size(); i++) {
+            if (contours[i].size() > sizeOfBiggestContour) {
+                sizeOfBiggestContour = contours[i].size();
+                indexOfBiggestContour = i;
+            }
+        }
+        vector<vector<int> > hull(contours.size());
+        vector<vector<Point> > hullPoint(contours.size()); // ì†ì˜ ì›€ì§ì„ì— ë”°ë¼ ì†ì„ ê°ì‹¸ëŠ” ë‹¤ê°í˜•
+        vector<vector<Vec4i> > defects(contours.size()); // ì†ê°€ë½ ëì˜ ë…¹ìƒ‰ ì  .. ë‹¤ì°¨ì› ë§¤íŠ¸ë¦­ìŠ¤
+        vector<vector<Point> > defectPoint(contours.size()); // ì†ê°€ë½ ëì  x, yë¥¼ ì ìœ¼ë¡œ ìœ ì§€
+        vector<vector<Point> > contours_poly(contours.size()); // ì†ì„ ê°ì‹¸ëŠ” ì›€ì§ì¼ ìˆ˜ìˆëŠ” ì§ì‚¬ê°í˜•, contour polygon
+        Point2f rect_point[4];
+        vector<RotatedRect> minRect(contours.size());
+        vector<Rect> boundRect(contours.size());
+        for (size_t i = 0; i < contours.size(); i++) {
+            if (contourArea(contours[i]) > 5000) {
+                convexHull(contours[i], hull[i], true);
+                convexityDefects(contours[i], hull[i], defects[i]);
+                if (indexOfBiggestContour == i) {
+                    minRect[i] = minAreaRect(contours[i]);
+                    for (size_t k = 0; k < hull[i].size(); k++) {
+                        int ind = hull[i][k];
+                        hullPoint[i].push_back(contours[i][ind]);
+                    }
+                    count = 0;
 
-					for (size_t k = 0; k < defects[i].size(); k++) {
-						if (defects[i][k][3] > 13 * 256) {
-							int p_start = defects[i][k][0];
-							int p_end = defects[i][k][1];
-							int p_far = defects[i][k][2];
-							defectPoint[i].push_back(contours[i][p_far]);
-							circle(med, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
-							count++;
-						}
+                    for (size_t k = 0; k < defects[i].size(); k++) {
+                        if (defects[i][k][3] > 13 * 256) {
+                            int p_start = defects[i][k][0];
+                            int p_end = defects[i][k][1];
+                            int p_far = defects[i][k][2];
+                            defectPoint[i].push_back(contours[i][p_far]);
+                            circle(med, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
+                            count++;
+                        }
 
-					}
+                    }
 
-					/* ¹¬Âîºü °ÔÀÓ
-					if (count == 0)
-						user = 0;
-					else if (count == 2)
-						user = 1;
-					else if (count == 5)
-						user = 2;
-					else {
-						strcpy_s(a, "ÀÎ½ÄÇÒ ¼ö ¾ø½À´Ï´Ù.");
-						putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-					}*/
-					
+                    /* ë¬µì°Œë¹  ê²Œì„
+                    if (count == 0)
+                        user = 0;
+                    else if (count == 2)
+                        user = 1;
+                    else if (count == 5)
+                        user = 2;
+                    else {
+                        strcpy_s(a, "ì¸ì‹í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    }*/
+
                     srand(time(NULL));
-                    rand(); //·£´ıÇÔ¼ö
 
-                    int A, B; //¼±ÈÄÀ§ÇÑ º¯¼ö
+                    int A, B; //ì„ í›„ìœ„í•œ ë³€ìˆ˜
 
-                    putText(image, "ÁØºñ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    waitKey(10);
-                    putText(image, "½ÃÀÛ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    waitKey(10);
+                    //putText(image, "ì¤€ë¹„", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    //waitKey(10);
+                    //putText(image, "ì‹œì‘", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    //waitKey(10);
 
-                    int com = rand() % 3 + 1; //·£´ı ÄÄÇ»ÅÍ ¹¬Âîºü °áÁ¤.
+                    int com = rand() % 3 + 1; //ëœë¤ ì»´í“¨í„° ë¬µì°Œë¹  ê²°ì •.
 
-                     //»ç¿ëÀÚ ¹¬Âîºü ÀÔ·Â¹Ş±â
+                     //ì‚¬ìš©ì ë¬µì°Œë¹  ì…ë ¥ë°›ê¸°
                     int user;
 
                     while (1) {
-                        if (count == 0)
+                        if (count == 0) {
                             user = 0;
-                        else if (count == 2)
+                            break;
+                        }
+                        else if (count == 2) {
                             user = 1;
-                        else if (count == 5)
+                            break;
+                        }
+                        else if (count == 5) {
                             user = 2;
+                            break;
+                        }
                         else
-                            strcpy_s(a, "ÀÎ½ÄÇÒ ¼ö ¾ø½À´Ï´Ù.");
-                            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            continue;
+                            strcpy_s(a, "ì¸ì‹í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                        continue;
                     }
 
                     switch (com) {
                     case 0: {
-                        image = imread("¹¬.png", 1);
-                        namedWindow("¹¬");
-                        imshow("¹¬", image);
+                        image = imread("ë¬µ.png", 1);
+                        namedWindow("ë¬µ");
+                        imshow("ë¬µ", image);
                         waitKey(20);
                         break;
                     }
                     case 1: {
-                        image = imread("Âî.png", 1);
-                        namedWindow("Âî");
-                        imshow("Âî", image);
+                        image = imread("ì°Œ.png", 1);
+                        namedWindow("ì°Œ");
+                        imshow("ì°Œ", image);
                         waitKey(20);
                         break;
                     }
                     case 2: {
-                        image = imread("ºü.png", 1);
-                        namedWindow("ºü");
-                        imshow("ºü", image);
+                        image = imread("ë¹ .png", 1);
+                        namedWindow("ë¹ ");
+                        imshow("ë¹ ", image);
                         waitKey(20);
                         break;
                     }
                     }
 
-                    //¼±ÈÄ °áÁ¤ÇÏ±â
+                    //ì„ í›„ ê²°ì •í•˜ê¸°
                     while (1) {
                         if ((user + 1) % 3 == com) {
-                            A = 1, B = 0; //À¯Àú °ø°İ
+                            A = 1, B = 0; //ìœ ì € ê³µê²©
                             break;
                         }
                         else if ((com + 1) % 3 == user) {
-                            A = 0, B = 1; //ÄÄ °ø°İ
+                            A = 0, B = 1; //ì»´ ê³µê²©
                             break;
                         }
                         else {
@@ -201,15 +206,15 @@ void track(int, void*) {
                                 else
                                     continue;
                             }
-                            putText(image, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            //cout << "¹«½ÂºÎ";
+                            putText(image, "ë‹¤ì‹œ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            //cout << "ë¬´ìŠ¹ë¶€";
                         }
                     }
 
                     while (1) {
                         if (A == 1 && B == 0) {
-                            putText(image, "´ç½ÅÀÇ °ø°İ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            //cout << "À¯Àú °ø°İ";
+                            putText(image, "ë‹¹ì‹ ì˜ ê³µê²©", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            //cout << "ìœ ì € ê³µê²©";
                             com = rand() % 3 + 1;
 
                             while (1) {
@@ -225,23 +230,23 @@ void track(int, void*) {
 
                             switch (com) {
                             case 0: {
-                                image = imread("¹¬.png", 1);
-                                namedWindow("¹¬");
-                                imshow("¹¬", image);
+                                image = imread("ë¬µ.png", 1);
+                                namedWindow("ë¬µ");
+                                imshow("ë¬µ", image);
                                 waitKey(20);
                                 break;
                             }
                             case 1: {
-                                image = imread("Âî.png", 1);
-                                namedWindow("Âî");
-                                imshow("Âî", image);
+                                image = imread("ì°Œ.png", 1);
+                                namedWindow("ì°Œ");
+                                imshow("ì°Œ", image);
                                 waitKey(20);
                                 break;
                             }
                             case 2: {
-                                image = imread("ºü.png", 1);
-                                namedWindow("ºü");
-                                imshow("ºü", image);
+                                image = imread("ë¹ .png", 1);
+                                namedWindow("ë¹ ");
+                                imshow("ë¹ ", image);
                                 waitKey(20);
                                 break;
                             }
@@ -265,14 +270,14 @@ void track(int, void*) {
                                         continue;
                                 }
                                 A == 1 && B == 0;
-                                putText(image, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                //cout << "´Ù½Ã";
+                                putText(image, "ë‹¤ì‹œ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                //cout << "ë‹¤ì‹œ";
                                 continue;
                             }
                         }
                         else {
-                            putText(image, "ÄÄ °ø°İ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            //cout << "ÄÄ °ø°İ";
+                            putText(image, "ì»´ ê³µê²©", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            //cout << "ì»´ ê³µê²©";
                             com = rand() % 3 + 1;
 
                             while (1) {
@@ -288,23 +293,23 @@ void track(int, void*) {
 
                             switch (com) {
                             case 0: {
-                                image = imread("¹¬.png", 1);
-                                namedWindow("¹¬");
-                                imshow("¹¬", image);
+                                image = imread("ë¬µ.png", 1);
+                                namedWindow("ë¬µ");
+                                imshow("ë¬µ", image);
                                 waitKey(20);
                                 break;
                             }
                             case 1: {
-                                image = imread("Âî.png", 1);
-                                namedWindow("Âî");
-                                imshow("Âî", image);
+                                image = imread("ì°Œ.png", 1);
+                                namedWindow("ì°Œ");
+                                imshow("ì°Œ", image);
                                 waitKey(20);
                                 break;
                             }
                             case 2: {
-                                image = imread("ºü.png", 1);
-                                namedWindow("ºü");
-                                imshow("ºü", image);
+                                image = imread("ë¹ .png", 1);
+                                namedWindow("ë¹ ");
+                                imshow("ë¹ ", image);
                                 waitKey(20);
                                 break;
                             }
@@ -328,33 +333,33 @@ void track(int, void*) {
                                         continue;
                                 }
                                 A == 0 && B == 1;
-                                putText(image, "´Ù½Ã", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                //cout << "´Ù½Ã";
+                                putText(image, "ë‹¤ì‹œ", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                //cout << "ë‹¤ì‹œ";
                                 continue;
                             }
                         }
                     }
 
 
-					drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
-					drawContours(handline, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
-					drawContours(med, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
-					approxPolyDP(contours[i], contours_poly[i], 3, false);
-					boundRect[i] = boundingRect(contours_poly[i]);
-					rectangle(med, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
-					minRect[i].points(rect_point);
-					for (size_t k = 0; k < 4; k++) {
-						line(med, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
-					}
+                    drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
+                    drawContours(handline, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
+                    drawContours(med, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
+                    approxPolyDP(contours[i], contours_poly[i], 3, false);
+                    boundRect[i] = boundingRect(contours_poly[i]);
+                    rectangle(med, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
+                    minRect[i].points(rect_point);
+                    for (size_t k = 0; k < 4; k++) {
+                        line(med, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
+                    }
 
-				}
-			}
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
 
-	imshow("Contoured image", handline);
+    imshow("Contoured image", handline);
 
 }
