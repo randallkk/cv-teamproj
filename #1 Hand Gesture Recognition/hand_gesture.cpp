@@ -21,9 +21,6 @@ int type = 1, deger = 8;
 
 
 int main() {
-
-
-
 	Ptr< BackgroundSubtractor> pMOG2;
 	pMOG2 = createBackgroundSubtractorMOG2();
 	cv::Rect myRoi(288, 12, 288, 288);
@@ -42,10 +39,10 @@ int main() {
 		kirpik = aynali(myRoi);
 		cvtColor(kirpik, griGoruntu, COLOR_RGB2GRAY);
 		//equalizeHist(griGoruntu, griGoruntu);
-		GaussianBlur(griGoruntu, griGoruntu, Size(23, 23), 0); //35,35
+		GaussianBlur(griGoruntu, griGoruntu, Size(23, 23), 0); //35,35	//15,15
 		//threshold(griGoruntu, or2, thresh, maxVal, THRESH_OTSU + CV_THRESH_BINARY_INV);
 		namedWindow("ayarla");
-		createTrackbar("Esik", "ayarla", &thresh, 250, track);
+		createTrackbar("Esik", "ayarla", &thresh, 250, track);	// thresh=threshold, maxVal=, type=, deger=degree
 		createTrackbar("Maksimum", "ayarla", &maxVal, 255, track);
 		createTrackbar("Esik Tipi", "ayarla", &type, 4, track);
 		createTrackbar("Kenarlar", "ayarla", &deger, 100, track);
