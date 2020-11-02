@@ -11,7 +11,7 @@
 using namespace cv;
 using namespace std;
 
-void track(int, void*);
+int track(int, void*);
 Mat cam, med;	// cam=orjinalGoruntu, med=med
 Mat masked;	//=masked
 Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main 화면=image
@@ -50,8 +50,71 @@ int main(int argc, char** argv) {
         GaussianBlur(med, med, Size(23, 23), 0); */
         pMOG2->apply(idk, masked);
 
-        track(0, 0);
-        imshow("묵찌빠 게임", image);
+        int user;
+        char a[40];
+        // 가위바위보 게임
+
+        int count = track(0, 0);
+
+        if (count == 0) {
+            user = 0;
+            strcpy_s(a, "Rock");
+        }
+        else if (count == 2) {
+            user = 1;
+            strcpy_s(a, "Sissors");
+        }
+        else if (count == 5) {
+            user = 2;
+            strcpy_s(a, "Paper");
+        }
+        else {
+            strcpy_s(a, "Cannot recognized");
+            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+        }
+
+        srand(time(NULL));
+
+        ////string say;
+        ////putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+        ////waitKey(1);
+
+        int com = rand() % 3; //랜덤 컴퓨터 가위바위보 결정.
+
+        switch (com) {
+        case 0: {
+            pic = imread("묵.png", 1);
+            namedWindow("묵");
+            imshow("묵", pic);
+            waitKey(20);
+        }
+        case 1: {
+            pic = imread("찌.png", 1);
+            namedWindow("찌");
+            imshow("찌", pic);
+            waitKey(20);
+        }
+        case 2: {
+            pic = imread("빠.png", 1);
+            namedWindow("빠");
+            imshow("빠", pic);
+            waitKey(20);
+        }
+        }
+
+        if ((user + 1) % 3 == com) {
+            putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);; //유저 승리
+            //break;
+        }
+        else if ((com + 1) % 3 == user) {
+            putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);; //컴 승리
+            //break;
+        }
+        else {
+            putText(image, "again", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false); //무승부
+        }
+
+        imshow("가위바위보", image);
         imshow("Blurred", med);
         if (waitKey(1) == 27)
             break;
@@ -60,9 +123,8 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-void track(int, void*) {
+int track(int, void*) {
     int count = 0;
-    char a[40];
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     //threshold(masked, or2, thresh, maxVal, type);
@@ -114,71 +176,6 @@ void track(int, void*) {
                         }
 
                     }
-                    int user;
-                    // 가위바위보 게임
-                    if (count == 0) {
-                        user = 0;
-                        strcpy_s(a, "Rock");
-                    }
-                    else if (count == 2) {
-                        user = 1;
-                        strcpy_s(a, "Sissors");
-                    }
-                    else if (count == 5) {
-                        user = 2;
-                        strcpy_s(a, "Paper");
-                    }
-                    else {
-                        strcpy_s(a, "Cannot recognized");
-                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    }
-
-                    srand(time(NULL));
-
-                    ////string say;
-                    ////putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    ////waitKey(1);
-                    ////putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    ////waitKey(1);
-
-                    int com = rand() % 3; //랜덤 컴퓨터 묵찌빠 결정.
-
-
-                    switch (com) {
-                    case 0: {
-                        pic = imread("묵.png", 1);
-                        namedWindow("묵");
-                        imshow("묵", pic);
-                        waitKey(20);
-                        break;
-                    }
-                    case 1: {
-                        pic = imread("찌.png", 1);
-                        namedWindow("찌");
-                        imshow("찌", pic);
-                        waitKey(20);
-                        break;
-                    }
-                    case 2: {
-                        pic = imread("빠.png", 1);
-                        namedWindow("빠");
-                        imshow("빠", pic);
-                        waitKey(20);
-                        break;
-                    }
-                    }
-
-                    if ((user + 1) % 3 == com) {
-                        putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);; //유저 승리
-                        break;
-                    }
-                    else if ((com + 1) % 3 == user) {
-                        putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);; //컴 승리
-                        break;
-                    }
-                    else {
-                        putText(image, "again", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false); //무승부
-                    }
                 }
 
                     drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
@@ -197,5 +194,7 @@ void track(int, void*) {
 
         }
     imshow("Contoured image", handline);
+
+    return count;
 
 }
