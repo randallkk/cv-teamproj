@@ -174,7 +174,7 @@ int game(int user)
                 break;
             }
             case 1: {
-                image = imread("찌.jpg", 1);
+                image = imread("찌.png", 1);
                 namedWindow("찌");
                 imshow("찌", image);
                 waitkey(20);
