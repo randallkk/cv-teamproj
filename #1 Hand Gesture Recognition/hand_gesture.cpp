@@ -13,9 +13,9 @@ using namespace std;
 
 
 void track(int, void*);
-Mat orjinalGoruntu;
-Mat fgMaskMOG2;	// fgMaskMOG2=masked
-Mat griGoruntu, kirpik, or2, kenarlar, aynali;	//griGoruntu=med, kirpik=idk, aynali=main 화면=image
+Mat cam;
+Mat masked;	// masked=masked
+Mat med, idk, or2, cannied, image;	//griGoruntu=med, kirpik=idk, aynali=main 화면=image
 int thresh = 140, maxVal = 255;
 int type = 1, deger = 8;
 
@@ -23,7 +23,7 @@ int type = 1, deger = 8;
 int main() {
 	Ptr< BackgroundSubtractor> pMOG2;
 	pMOG2 = createBackgroundSubtractorMOG2();
-	cv::Rect myRoi(288, 12, 288, 288);
+	cv::Rect myRoi(288, 12, 288, 288);	//myRoi=handrect
 	Mat element = getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1));
 	Mat frame;
 	Mat resizeF;
@@ -32,29 +32,29 @@ int main() {
 	while (1)
 	{
 		Mat aynali2;
-		cap >> orjinalGoruntu;
-		cv::flip(orjinalGoruntu, aynali, 1);
-		//cv::rectangle(orjinalGoruntu, cv::Point(300, 300), cv::Point(12, 12), cv::Scalar(0, 0, 255));
-		cv::rectangle(aynali, myRoi, cv::Scalar(0, 0, 255));
-		kirpik = aynali(myRoi);
-		cvtColor(kirpik, griGoruntu, COLOR_RGB2GRAY);
-		//equalizeHist(griGoruntu, griGoruntu);
-		GaussianBlur(griGoruntu, griGoruntu, Size(23, 23), 0); //35,35	//15,15
-		//threshold(griGoruntu, or2, thresh, maxVal, THRESH_OTSU + CV_THRESH_BINARY_INV);
+		cap >> cam;
+		cv::flip(cam, image, 1);
+		//cv::rectangle(cam, cv::Point(300, 300), cv::Point(12, 12), cv::Scalar(0, 0, 255));
+		cv::rectangle(image, myRoi, cv::Scalar(0, 0, 255));
+		idk = image(myRoi);
+		cvtColor(idk, med, COLOR_RGB2GRAY);
+		//equalizeHist(med, med);
+		GaussianBlur(med, med, Size(23, 23), 0); //35,35	//15,15
+		//threshold(med, or2, thresh, maxVal, THRESH_OTSU + CV_THRESH_BINARY_INV);
 		namedWindow("ayarla");
 		createTrackbar("Esik", "ayarla", &thresh, 250, track);	// thresh=threshold, maxVal=, type=, deger=degree
 		createTrackbar("Maksimum", "ayarla", &maxVal, 255, track);
 		createTrackbar("Esik Tipi", "ayarla", &type, 4, track);
 		createTrackbar("Kenarlar", "ayarla", &deger, 100, track);
-		pMOG2->apply(kirpik, fgMaskMOG2);
-		cv::rectangle(fgMaskMOG2, myRoi, cv::Scalar(0, 0, 255));
+		pMOG2->apply(idk, masked);
+		cv::rectangle(masked, myRoi, cv::Scalar(0, 0, 255));
 
-		//cv::flip(fgMaskMOG2, aynali2, 1);
+		//cv::flip(masked, aynali2, 1);
 
 		track(0, 0);
-		imshow("ORJINAL Goruntu", aynali);	// =imshow("묵찌빠 게임", image);
-		imshow("ArkaPlan Kaldırıldı", fgMaskMOG2);	//배경제거
-		imshow("Gri", griGoruntu);	// =imshow("Blurred", med2);
+		imshow("ORJINAL Goruntu", image);	// =imshow("묵찌빠 게임", image);
+		imshow("ArkaPlan Kaldırıldı", masked);	//배경제거
+		imshow("Gri", med);	// =imshow("Blurred", med2);
 
 
 
@@ -73,15 +73,15 @@ void track(int, void*) {
 	char a[40];
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
-	//threshold(fgMaskMOG2, or2, thresh, maxVal, type);
-	//GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(11, 11), 3.5, 3.5);
-	//threshold(fgMaskMOG2, or2, 10, 255, THRESH_OTSU);
-	GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(27, 27), 3.5, 3.5);
-	threshold(fgMaskMOG2, fgMaskMOG2, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
-	//Canny(or2, kenarlar, deger, deger * 2, 3);
-	Canny(fgMaskMOG2, kenarlar, deger, deger * 2, 3); //OR2
-	findContours(fgMaskMOG2, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
-	Mat cizim = Mat::zeros(kenarlar.size(), CV_8UC3); //kenarlar.size() or2.size()	= handline
+	//threshold(masked, or2, thresh, maxVal, type);
+	//GaussianBlur(masked, masked, Size(11, 11), 3.5, 3.5);
+	//threshold(masked, or2, 10, 255, THRESH_OTSU);
+	GaussianBlur(masked, masked, Size(27, 27), 3.5, 3.5);
+	threshold(masked, masked, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
+	//Canny(or2, cannied, deger, deger * 2, 3);
+	Canny(masked, cannied, deger, deger * 2, 3); //OR2
+	findContours(masked, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
+	Mat cizim = Mat::zeros(cannied.size(), CV_8UC3); //cannied.size() or2.size()	= handline
 	if (contours.size() > 0) {
 		size_t indexOfBiggestContour = -1;
 		size_t sizeOfBiggestContour = 0;
@@ -117,10 +117,9 @@ void track(int, void*) {
 							int p_end = defects[i][k][1];
 							int p_far = defects[i][k][2];
 							defectPoint[i].push_back(contours[i][p_far]);
-							circle(griGoruntu, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
+							circle(med, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
 							count++;
 						}
-
 					}
 
 					if (count == 1)
@@ -136,17 +135,17 @@ void track(int, void*) {
 					else
 						strcpy_s(a, "EL GOSTER");
 
-					putText(aynali, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+					putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
 
 					drawContours(cizim, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
 					drawContours(cizim, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
-					drawContours(griGoruntu, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
+					drawContours(med, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
 					approxPolyDP(contours[i], contours_poly[i], 3, false);
 					boundRect[i] = boundingRect(contours_poly[i]);
-					rectangle(griGoruntu, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
+					rectangle(med, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
 					minRect[i].points(rect_point);
 					for (size_t k = 0; k < 4; k++) {
-						line(griGoruntu, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
+						line(med, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
 					}
 
 				}

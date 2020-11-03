@@ -13,11 +13,11 @@ using namespace std;
 
 void track(int, void*);
 Mat orjinalGoruntu;
-Mat fgMaskMOG2;	// fgMaskMOG2=masked
-Mat griGoruntu, kirpik, or2, kenarlar, aynali;	//griGoruntu=med, kirpik=idk, aynali=main 화면=image
+Mat masked;
+Mat med, idk, cannied, image;
 Mat pic;
 int thresh = 140, maxVal = 255;
-int type = 1, deger = 8;
+int type = 2, deger = 8;
 
 
 
@@ -36,25 +36,25 @@ int main() {
 	while (1) {
 		Mat aynali2;
 		cap >> orjinalGoruntu;
-		cv::flip(orjinalGoruntu, aynali, 1);
+		cv::flip(orjinalGoruntu, image, 1);
 		//cv::rectangle(orjinalGoruntu, cv::Point(300, 300), cv::Point(12, 12), cv::Scalar(0, 0, 255));
-		cv::rectangle(aynali, myRoi, cv::Scalar(0, 0, 255));
-		kirpik = aynali(myRoi);
-		cvtColor(kirpik, griGoruntu, COLOR_RGB2GRAY);
-		//equalizeHist(griGoruntu, griGoruntu);
-		GaussianBlur(griGoruntu, griGoruntu, Size(23, 23), 0); //35,35	//15,15
-		//threshold(griGoruntu, or2, thresh, maxVal, THRESH_OTSU + CV_THRESH_BINARY_INV);
-		namedWindow("ayarla");
-		createTrackbar("Esik", "ayarla", &thresh, 250, track);	// thresh=threshold, maxVal=, type=, deger=degree
-		createTrackbar("Maksimum", "ayarla", &maxVal, 255, track);
-		createTrackbar("Esik Tipi", "ayarla", &type, 4, track);
-		createTrackbar("Kenarlar", "ayarla", &deger, 100, track);
-		pMOG2->apply(kirpik, fgMaskMOG2);
-		cv::rectangle(fgMaskMOG2, myRoi, cv::Scalar(0, 0, 255));
+		cv::rectangle(image, myRoi, cv::Scalar(0, 0, 255));
+		idk = image(myRoi);
+		cvtColor(idk, med, COLOR_RGB2GRAY);
+		//equalizeHist(med, med);
+		GaussianBlur(med, med, Size(23, 23), 0); //35,35	//15,15
+		//threshold(med, or2, thresh, maxVal, THRESH_OTSU + CV_THRESH_BINARY_INV);
+		namedWindow("Trackbar");
+		createTrackbar("Threshold", "Trackbar", &thresh, 250, track);	// thresh=threshold, maxVal=, type=, deger=degree
+		createTrackbar("MaxVal", "Trackbar", &maxVal, 255, track);
+		createTrackbar("Type", "Trackbar", &type, 4, track);
+		createTrackbar("Handline", "Trackbar", &deger, 100, track);
+		pMOG2->apply(idk, masked);
+		cv::rectangle(masked, myRoi, cv::Scalar(0, 0, 255));
 		track(0, 0);
-		imshow("ORJINAL Goruntu", aynali);	// =imshow("묵찌빠 게임", image);
-		imshow("ArkaPlan Kaldırıldı", fgMaskMOG2);	//배경제거
-		imshow("Gri", griGoruntu);	// =imshow("Blurred", med2)
+		imshow("가위바위보", image);	// =imshow("묵찌빠 게임", image);
+		imshow("Binary", masked);	//배경제거
+		imshow("Blurred", med);
 
 		if (key == 27) break;
 
@@ -66,19 +66,15 @@ int main() {
 
 
 void track(int, void*) {
-	int count = 0;
+	int count;
 	char a[40];
 	vector<vector<Point> > contours;
 	vector<Vec4i> hierarchy;
-	//threshold(fgMaskMOG2, or2, thresh, maxVal, type);
-	//GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(11, 11), 3.5, 3.5);
-	//threshold(fgMaskMOG2, or2, 10, 255, THRESH_OTSU);
-	GaussianBlur(fgMaskMOG2, fgMaskMOG2, Size(27, 27), 3.5, 3.5);
-	threshold(fgMaskMOG2, fgMaskMOG2, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
-	//Canny(or2, kenarlar, deger, deger * 2, 3);
-	Canny(fgMaskMOG2, kenarlar, deger, deger * 2, 3); //OR2
-	findContours(fgMaskMOG2, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
-	Mat cizim = Mat::zeros(kenarlar.size(), CV_8UC3); //kenarlar.size() or2.size()	= handline
+	GaussianBlur(masked, masked, Size(27, 27), 3.5, 3.5);
+	threshold(masked, masked, thresh, maxVal, type); //THRESH_BINARY + THRESH_OTSU
+	Canny(masked, cannied, deger, deger * 2, 3); //OR2
+	findContours(masked, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0)); //OR2
+	Mat handline = Mat::zeros(cannied.size(), CV_8UC3); //cannied.size() or2.size()	= handline
 	if (contours.size() > 0) {
 		size_t indexOfBiggestContour = -1;
 		size_t sizeOfBiggestContour = 0;
@@ -89,10 +85,10 @@ void track(int, void*) {
 			}
 		}
 		vector<vector<int> >hull(contours.size());
-		vector<vector<Point> >hullPoint(contours.size()); //elin hareketine göre eli çevreleyen çokgen	
-		vector<vector<Vec4i> > defects(contours.size()); //parmak uclarindaki yesil noktalar..multi dimensional matrix
-		vector<vector<Point> >defectPoint(contours.size()); //point olarak parmak ucu noktalarýný x,y olarak tutuyor
-		vector<vector<Point> >contours_poly(contours.size()); //eli çevreleyen hareketli dikdörtgen		
+		vector<vector<Point> >hullPoint(contours.size()); //손의 움직임에 따라 손을 감싸는 다각형
+		vector<vector<Vec4i> > defects(contours.size()); //손가락 끝의 녹색 점 .. 다차원 매트릭스
+		vector<vector<Point> >defectPoint(contours.size()); //손가락 끝점 x, y를 점으로 유지
+		vector<vector<Point> >contours_poly(contours.size()); //손을 감싸는 움직일 수있는 직사각형, contour polygon		
 		Point2f rect_point[4];
 		vector<RotatedRect>minRect(contours.size());
 		vector<Rect> boundRect(contours.size());
@@ -114,7 +110,7 @@ void track(int, void*) {
 							int p_end = defects[i][k][1];
 							int p_far = defects[i][k][2];
 							defectPoint[i].push_back(contours[i][p_far]);
-							circle(griGoruntu, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
+							circle(med, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
 							count++;
 						}
 
@@ -124,21 +120,21 @@ void track(int, void*) {
 
 					if (count == 1) {
 						user = 0;
-						strcpy_s(a, "Rock");
+						strcpy_s(a, "user: Rock");
 					}
 					else if (count == 2 || count == 3) {
 						user = 1;
-						strcpy_s(a, "Sissors");
+						strcpy_s(a, "user: Sissors");
 					}
 					else if (count == 5 || count == 6) {
 						user = 2;
-						strcpy_s(a, "Paper");
+						strcpy_s(a, "user: Paper");
 					}
 					else {
-						strcpy_s(a, "Cannot recognized");
+						strcpy_s(a, "user: Cannot recognized");
 					}
 
-					putText(aynali, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+					putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
 
 					srand(time(NULL));
 
@@ -147,22 +143,22 @@ void track(int, void*) {
 					switch (com) {
 					case 0: {
 						pic = imread("묵.png", 1);
-						namedWindow("묵");
-						imshow("묵", pic);
+						namedWindow("com");
+						imshow("com", pic);
 						waitKey(20);
 						break;
 					}
 					case 1: {
 						pic = imread("찌.png", 1);
-						namedWindow("찌");
-						imshow("찌", pic);
+						namedWindow("com");
+						imshow("com", pic);
 						waitKey(20);
 						break;
 					}
 					case 2: {
 						pic = imread("빠.png", 1);
-						namedWindow("빠");
-						imshow("빠", pic);
+						namedWindow("com");
+						imshow("com", pic);
 						waitKey(20);
 						break;
 					}
@@ -170,29 +166,35 @@ void track(int, void*) {
 
 					if ((user + 1) % 3 == com) {
 						strcpy_s(a, "Winner");
+						waitKey(10);
+						destroyWindow("com");
 						//break;
 					}
 					else if ((com + 1) % 3 == user) {
 						strcpy_s(a, "loser");
+						waitKey(10);
+						destroyWindow("com");
 						//break;
 					}
 					else {
 						strcpy_s(a, "again");
+						waitKey(10);
+						destroyWindow("com");
 					}
-					putText(aynali, a, Point(40, 40), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+					putText(image, a, Point(40, 40), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
 
 
 
 
-					drawContours(cizim, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
-					drawContours(cizim, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
-					drawContours(griGoruntu, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
+					drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
+					drawContours(handline, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
+					drawContours(med, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
 					approxPolyDP(contours[i], contours_poly[i], 3, false);
 					boundRect[i] = boundingRect(contours_poly[i]);
-					rectangle(griGoruntu, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
+					rectangle(med, boundRect[i].tl(), boundRect[i].br(), Scalar(255, 0, 0), 2, 8, 0);
 					minRect[i].points(rect_point);
 					for (size_t k = 0; k < 4; k++) {
-						line(griGoruntu, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
+						line(med, rect_point[k], rect_point[(k + 1) % 4], Scalar(0, 255, 0), 2, 8);
 					}
 
 				}
@@ -203,6 +205,6 @@ void track(int, void*) {
 	}
 
 
-	imshow("Sonuc", cizim);
+	imshow("Contoured image", handline);
 
 }

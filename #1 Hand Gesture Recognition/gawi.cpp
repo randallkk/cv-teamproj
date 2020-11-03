@@ -11,14 +11,16 @@
 using namespace cv;
 using namespace std;
 
-int track(int, void*);
-Mat cam, med;	// cam=orjinalGoruntu, med=med
-Mat masked;	//=masked
+void track(int, void*);
+Mat cam, med;	// cam=orjinalGoruntu, med=griGoruntu
+Mat masked;	//fgMaskMOG2=masked
 Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main 화면=image
-Mat pic;    // 컴퓨터가 뭐 냈는지
+Mat pic;    // 컴퓨터가 뭐 냈는지(가위바위보)
 
 int thresh = 140, maxVal = 255;
 int type = 1, deger = 8;
+
+int count;
 
 int main(int argc, char** argv) {
 
@@ -26,7 +28,7 @@ int main(int argc, char** argv) {
     pMOG2 = createBackgroundSubtractorMOG2();
 
     Rect handrect(288, 80, 288, 288);	// 손을 넣어야 할 직사각형 =myRoi
-    Mat element = getStructuringElement(MORPH_RECT, Size(3, 3), Point(1, 1));	// 
+    Mat element = getStructuringElement(MORPH_RECT, Size(5, 5), Point(1, 1));	// 원래 (3, 3)
 
 
     VideoCapture cap(0);	// webcam 영상을 opencv로 넘겨주기
@@ -50,21 +52,21 @@ int main(int argc, char** argv) {
         GaussianBlur(med, med, Size(23, 23), 0); */
         pMOG2->apply(idk, masked);
 
-        int user;
+        int user=100;
         char a[40];
         // 가위바위보 게임
 
-        int count = track(0, 0);
+        track(0, 0);
 
-        if (count == 0) {
+        if (::count == 0) {
             user = 0;
             strcpy_s(a, "Rock");
         }
-        else if (count == 2) {
+        else if (::count == 2) {
             user = 1;
             strcpy_s(a, "Sissors");
         }
-        else if (count == 5) {
+        else if (::count == 5) {
             user = 2;
             strcpy_s(a, "Paper");
         }
@@ -123,8 +125,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-int track(int, void*) {
-    int count = 0;
+void track(int, void*) {
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     //threshold(masked, or2, thresh, maxVal, type);
@@ -163,7 +164,7 @@ int track(int, void*) {
                         int ind = hull[i][k];
                         hullPoint[i].push_back(contours[i][ind]);
                     }
-                    count = 0;
+                    ::count = 0;
 
                     for (size_t k = 0; k < defects[i].size(); k++) {
                         if (defects[i][k][3] > 13 * 256) {
@@ -172,7 +173,7 @@ int track(int, void*) {
                             int p_far = defects[i][k][2];
                             defectPoint[i].push_back(contours[i][p_far]);
                             circle(med, contours[i][p_end], 3, Scalar(0, 255, 0), 2); //i ydi
-                            count++;
+                            ::count++;
                         }
 
                     }
@@ -194,7 +195,5 @@ int track(int, void*) {
 
         }
     imshow("Contoured image", handline);
-
-    return count;
 
 }

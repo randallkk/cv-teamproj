@@ -11,9 +11,9 @@
 using namespace cv;
 using namespace std;
 
-void track(int, void*);
-Mat cam, med;	// cam=orjinalGoruntu, med=med
-Mat masked;	//=masked
+int track(int, void*);
+Mat cam, med;	// cam=orjinalGoruntu, griGoruntu=med
+Mat masked;	//masked=fgMaskMOG2
 Mat idk, cannied, image;	// idk=kirpik, cannied=kenarlar, image=main 화면=image
 int game(int user);	// 묵찌빠
 int thresh = 140, maxVal = 255;
@@ -49,7 +49,281 @@ int main(int argc, char** argv) {
         GaussianBlur(med, med, Size(23, 23), 0); */
         pMOG2->apply(idk, masked);
 
-        track(0, 0);
+        srand(time(NULL));
+
+        int A, B; //선후위한 변수
+
+        Mat pic;
+
+        //string say;
+        //strcpy_s(a, "인식할 수 없습니다.");
+        //putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+        //waitKey(1);
+        //say = "start";
+        //putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+        //waitKey(1);
+
+        int com = rand() % 3 + 1; //랜덤 컴퓨터 묵찌빠 결정.
+
+        int user, count;
+        char a[40];
+
+        while (1) {     //사용자 묵찌빠 입력받기
+            count = track(0, 0);
+            if (count == 0) {
+                user = 0;   // 주먹
+                break;
+            }
+            else if (count == 2) {
+                user = 1;   // 보자기
+                break;
+            }
+            else if (count == 5) {
+                user = 2;   // 가위
+                break;
+            }
+            else {
+                strcpy_s(a, "인식할 수 없습니다.");
+                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                continue;
+            }
+
+        }
+
+        switch (com) {
+        case 0: {
+            pic = imread("묵.png", 1);
+            namedWindow("묵");
+            imshow("묵", pic);
+            waitKey(20);
+            break;
+        }
+        case 1: {
+            pic = imread("찌.png", 1);
+            namedWindow("찌");
+            imshow("찌", pic);
+            waitKey(20);
+            break;
+        }
+        case 2: {
+            pic = imread("빠.png", 1);
+            namedWindow("빠");
+            imshow("빠", pic);
+            waitKey(20);
+            break;
+        }
+        }
+
+        //선후 결정하기
+        while (1) {
+            if ((user + 1) % 3 == com) {    // 유저 승
+                A = 1, B = 0; // 유저 공격
+                break;
+            }
+            else if ((com + 1) % 3 == user) {   // 컴퓨터 승
+                A = 0, B = 1; // 컴퓨터 공격
+                break;
+            }
+            else {  // 무승부일 때
+                com = rand() % 3 + 1;
+
+                while (1) {
+                    count = track(0, 0);
+                    if (count == 0) {
+                        user = 0;
+                        break;
+                    }
+                    else if (count == 2) {
+                        user = 1;
+                        break;
+                    }
+                    else if (count == 5) {
+                        user = 2;
+                        break;
+                    }
+                    else {
+                        strcpy_s(a, "인식할 수 없습니다.");
+                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                        continue;
+                    }
+                }
+
+                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "무승부";
+            }
+        }
+
+        while (1) {
+            if (A == 1 && B == 0) {
+                putText(image, "당신의 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "유저 공격";
+                com = rand() % 3 + 1;
+
+                while (1) {
+                    count = track(0, 0);
+                    if (count == 0) {
+                        user = 0;
+                        break;
+                    }
+                    else if (count == 2) {
+                        user = 1;
+                        break;
+                    }
+                    else if (count == 5) {
+                        user = 2;
+                        break;
+                    }
+                    else {
+                        strcpy_s(a, "인식할 수 없습니다.");
+                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                        continue;
+                    }
+                }
+
+                switch (com) {
+                case 0: {
+                    pic = imread("묵.png", 1);
+                    namedWindow("묵");
+                    imshow("묵", pic);
+                    waitKey(20);
+                    break;
+                }
+                case 1: {
+                    pic = imread("찌.png", 1);
+                    namedWindow("찌");
+                    imshow("찌", pic);
+                    waitKey(20);
+                    break;
+                }
+                case 2: {
+                    pic = imread("빠.png", 1);
+                    namedWindow("빠");
+                    imshow("빠", pic);
+                    waitKey(20);
+                    break;
+                }
+                }
+
+                if (user == com) {
+                    putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    //cout << "winner";
+                }
+                else {
+                    com = rand() % 3 + 1;
+
+                    while (1) {
+                        count = track(0, 0);
+                        if (count == 0) {
+                            user = 0;
+                            break;
+                        }
+                        else if (count == 2) {
+                            user = 1;
+                            break;
+                        }
+                        else if (count == 5) {
+                            user = 2;
+                            break;
+                        }
+                        else {
+                            strcpy_s(a, "인식할 수 없습니다.");
+                            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            continue;
+                        }
+                    }
+
+                    A == 1 && B == 0;
+                    putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    //cout << "다시";
+                    continue;
+                }
+            }
+            else {
+                putText(image, "컴 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                //cout << "컴 공격";
+                com = rand() % 3 + 1;
+
+                while (1) {
+                    count = track(0, 0);
+                    if (count == 0) {
+                        user = 0;
+                        break;
+                    }
+                    else if (count == 2) {
+                        user = 1;
+                        break;
+                    }
+                    else if (count == 5) {
+                        user = 2;
+                        break;
+                    }
+                    else {
+                        strcpy_s(a, "인식할 수 없습니다.");
+                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                        continue;
+                    }
+                }
+
+                switch (com) {
+                case 0: {
+                    pic = imread("묵.png", 1);
+                    namedWindow("묵");
+                    imshow("묵", pic);
+                    waitKey(20);
+                    break;
+                }
+                case 1: {
+                    pic = imread("찌.png", 1);
+                    namedWindow("찌");
+                    imshow("찌", pic);
+                    waitKey(20);
+                    break;
+                }
+                case 2: {
+                    pic = imread("빠.png", 1);
+                    namedWindow("빠");
+                    imshow("빠", pic);
+                    waitKey(20);
+                    break;
+                }
+                }
+
+                if (user == com) {
+                    putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    //cout << "loser";
+                }
+                else {
+                    com = rand() % 3 + 1;
+
+                    while (1) {
+                        count = track(0, 0);
+                        if (count == 0) {
+                            user = 0;
+                            break;
+                        }
+                        else if (count == 2) {
+                            user = 1;
+                            break;
+                        }
+                        else if (count == 5) {
+                            user = 2;
+                            break;
+                        }
+                        else {
+                            strcpy_s(a, "인식할 수 없습니다.");
+                            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            continue;
+                        }
+                    }
+
+                    A == 0 && B == 1;
+                    putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                    //cout << "다시";
+                    continue;
+                }
+            }
+        }
+
         imshow("묵찌빠 게임", image);
         imshow("Blurred", med);
         if (waitKey(1) == 27)
@@ -59,9 +333,8 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-void track(int, void*) {
+int track(int, void*) {
     int count = 0;
-    char a[40];
     vector<vector<Point> > contours;
     vector<Vec4i> hierarchy;
     //threshold(masked, or2, thresh, maxVal, type);
@@ -126,274 +399,6 @@ void track(int, void*) {
                         putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                     }*/
 
-                    srand(time(NULL));
-
-                    int A, B; //선후위한 변수
-
-                    //string say;
-                    //strcpy_s(a, "인식할 수 없습니다.");
-                    //putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    //waitKey(1);
-                    //say = "start";
-                    //putText(image, say, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                    //waitKey(1);
-
-                    int com = rand() % 3 + 1; //랜덤 컴퓨터 묵찌빠 결정.
-
-                     //사용자 묵찌빠 입력받기
-                    int user;
-
-                    while (1) {
-                        if (count == 0) {
-                            user = 0;
-                            break;
-                        }
-                        else if (count == 2) {
-                            user = 1;
-                            break;
-                        }
-                        else if (count == 5) {
-                            user = 2;
-                            break;
-                        }
-                        else {
-                            strcpy_s(a, "인식할 수 없습니다.");
-                            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            continue;
-                        }
-
-                    }
-
-                    switch (com) {
-                    case 0: {
-                        image = imread("묵.png", 1);
-                        namedWindow("묵");
-                        imshow("묵", image);
-                        waitKey(20);
-                        break;
-                    }
-                    case 1: {
-                        image = imread("찌.png", 1);
-                        namedWindow("찌");
-                        imshow("찌", image);
-                        waitKey(20);
-                        break;
-                    }
-                    case 2: {
-                        image = imread("빠.png", 1);
-                        namedWindow("빠");
-                        imshow("빠", image);
-                        waitKey(20);
-                        break;
-                    }
-                    }
-
-                    //선후 결정하기
-                    while (1) {
-                        if ((user + 1) % 3 == com) {
-                            A = 1, B = 0; //유저 공격
-                            break;
-                        }
-                        else if ((com + 1) % 3 == user) {
-                            A = 0, B = 1; //컴 공격
-                            break;
-                        }
-                        else {
-                            com = rand() % 3 + 1;
-
-                            while (1) {
-                                if (count == 0) {
-                                    user = 0;
-                                    break;
-                                }
-                                else if (count == 2) {
-                                    user = 1;
-                                    break;
-                                }
-                                else if (count == 5) {
-                                    user = 2;
-                                    break;
-                                }
-                                else {
-                                    strcpy_s(a, "인식할 수 없습니다.");
-                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                    continue;
-                                }
-                            }
-
-                            putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            //cout << "무승부";
-                        }
-                    }
-
-                    while (1) {
-                        if (A == 1 && B == 0) {
-                            putText(image, "당신의 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            //cout << "유저 공격";
-                            com = rand() % 3 + 1;
-
-                            while (1) {
-                                if (count == 0) {
-                                    user = 0;
-                                    break;
-                                }
-                                else if (count == 2) {
-                                    user = 1;
-                                    break;
-                                }
-                                else if (count == 5) {
-                                    user = 2;
-                                    break;
-                                }
-                                else {
-                                    strcpy_s(a, "인식할 수 없습니다.");
-                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                    continue;
-                                }
-                            }
-
-                            switch (com) {
-                            case 0: {
-                                image = imread("묵.png", 1);
-                                namedWindow("묵");
-                                imshow("묵", image);
-                                waitKey(20);
-                                break;
-                            }
-                            case 1: {
-                                image = imread("찌.png", 1);
-                                namedWindow("찌");
-                                imshow("찌", image);
-                                waitKey(20);
-                                break;
-                            }
-                            case 2: {
-                                image = imread("빠.png", 1);
-                                namedWindow("빠");
-                                imshow("빠", image);
-                                waitKey(20);
-                                break;
-                            }
-                            }
-
-                            if (user == com) {
-                                putText(image, "winner", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                //cout << "winner";
-                            }
-                            else {
-                                com = rand() % 3 + 1;
-
-                                while (1) {
-                                    if (count == 0) {
-                                        user = 0;
-                                        break;
-                                    }
-                                    else if (count == 2) {
-                                        user = 1;
-                                        break;
-                                    }
-                                    else if (count == 5) {
-                                        user = 2;
-                                        break;
-                                    }
-                                    else {
-                                        strcpy_s(a, "인식할 수 없습니다.");
-                                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                        continue;
-                                    }
-                                }
-
-                                A == 1 && B == 0;
-                                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                //cout << "다시";
-                                continue;
-                            }
-                        }
-                        else {
-                            putText(image, "컴 공격", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                            //cout << "컴 공격";
-                            com = rand() % 3 + 1;
-
-                            while (1) {
-                                if (count == 0) {
-                                    user = 0;
-                                    break;
-                                }
-                                else if (count == 2) {
-                                    user = 1;
-                                    break;
-                                }
-                                else if (count == 5) {
-                                    user = 2;
-                                    break;
-                                }
-                                else {
-                                    strcpy_s(a, "인식할 수 없습니다.");
-                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                    continue;
-                                }
-                            }
-
-                            switch (com) {
-                            case 0: {
-                                image = imread("묵.png", 1);
-                                namedWindow("묵");
-                                imshow("묵", image);
-                                waitKey(20);
-                                break;
-                            }
-                            case 1: {
-                                image = imread("찌.png", 1);
-                                namedWindow("찌");
-                                imshow("찌", image);
-                                waitKey(20);
-                                break;
-                            }
-                            case 2: {
-                                image = imread("빠.png", 1);
-                                namedWindow("빠");
-                                imshow("빠", image);
-                                waitKey(20);
-                                break;
-                            }
-                            }
-
-                            if (user == com) {
-                                putText(image, "loser", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                //cout << "loser";
-                            }
-                            else {
-                                com = rand() % 3 + 1;
-
-                                while (1) {
-                                    if (count == 0) {
-                                        user = 0;
-                                        break;
-                                    }
-                                    else if (count == 2) {
-                                        user = 1;
-                                        break;
-                                    }
-                                    else if (count == 5) {
-                                        user = 2;
-                                        break;
-                                    }
-                                    else {
-                                        strcpy_s(a, "인식할 수 없습니다.");
-                                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                        continue;
-                                    }
-                                }
-
-                                A == 0 && B == 1;
-                                putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                //cout << "다시";
-                                continue;
-                            }
-                        }
-                    }
-
-
                     drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
                     drawContours(handline, hullPoint, i, Scalar(255, 255, 0), 1, 8, vector<Vec4i>(), 0, Point());
                     drawContours(med, hullPoint, i, Scalar(0, 0, 255), 2, 8, vector<Vec4i>(), 0, Point());
@@ -414,5 +419,7 @@ void track(int, void*) {
 
 
     imshow("Contoured image", handline);
+
+    return count;
 
 }

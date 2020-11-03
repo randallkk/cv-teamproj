@@ -113,7 +113,7 @@ void track(int, void*) {
                         }
 
                     }
-
+                    int user;   
                     /* 묵찌빠 게임
                     if (count == 0)
                         user = 0;
@@ -122,13 +122,13 @@ void track(int, void*) {
                     else if (count == 5)
                         user = 2;
                     else {
-                        strcpy_s(a, "인식할 수 없습니다.");
+                        strcpy_s(a, "Cannot recognize");
                         putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                     }*/
 
                     srand(time(NULL));
 
-                    int A, B; //선후위한 변수
+                    int A, B; //선후 위한 변수
 
                     //putText(image, "준비", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
                     //waitKey(10);
@@ -138,7 +138,6 @@ void track(int, void*) {
                     int com = rand() % 3 + 1; //랜덤 컴퓨터 묵찌빠 결정.
 
                      //사용자 묵찌빠 입력받기
-                    int user;
 
                     while (1) {
                         if (count == 0) {
@@ -153,13 +152,14 @@ void track(int, void*) {
                             user = 2;
                             break;
                         }
-                        else
+                        else {
                             strcpy_s(a, "인식할 수 없습니다.");
-                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                        continue;
+                            putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                            continue;
+                        }
                     }
 
-                    switch (com) {
+                    /*switch (com) {
                     case 0: {
                         image = imread("묵.png", 1);
                         namedWindow("묵");
@@ -209,10 +209,11 @@ void track(int, void*) {
                                     user = 2;
                                     break;
                                 }
-                                else
+                                else {
                                     strcpy_s(a, "인식할 수 없습니다.");
-                                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                continue;
+                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                    continue;
+                                }
                             }
 
                             putText(image, "다시", Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
@@ -239,10 +240,11 @@ void track(int, void*) {
                                     user = 2;
                                     break;
                                 }
-                                else
+                                else {
                                     strcpy_s(a, "인식할 수 없습니다.");
-                                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                continue;
+                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                    continue;
+                                }
                             }
 
                             switch (com) {
@@ -289,10 +291,11 @@ void track(int, void*) {
                                         user = 2;
                                         break;
                                     }
-                                    else
+                                    else {
                                         strcpy_s(a, "인식할 수 없습니다.");
-                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                    continue;
+                                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                        continue;
+                                    }
                                 }
 
                                 A == 1 && B == 0;
@@ -319,10 +322,11 @@ void track(int, void*) {
                                     user = 2;
                                     break;
                                 }
-                                else
+                                else {
                                     strcpy_s(a, "인식할 수 없습니다.");
-                                putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                continue;
+                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                    continue;
+                                }
                             }
 
                             switch (com) {
@@ -369,10 +373,11 @@ void track(int, void*) {
                                         user = 2;
                                         break;
                                     }
-                                    else
+                                    else {
                                         strcpy_s(a, "인식할 수 없습니다.");
-                                    putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
-                                    continue;
+                                        putText(image, a, Point(75, 450), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
+                                        continue;
+                                    }
                                 }
 
                                 A == 0 && B == 1;
@@ -381,7 +386,7 @@ void track(int, void*) {
                                 continue;
                             }
                         }
-                    }
+                    }*/
 
 
                     drawContours(handline, contours, i, Scalar(255, 255, 0), 2, 8, vector<Vec4i>(), 0, Point());
