@@ -143,19 +143,19 @@ void track(int, void*) {
 					switch (com) {
 					case 0: {
 						pic = imread("묵.png", 1);
-						imshow("가위바위보", pic);
+						imshow("com", pic);
 						waitKey(20);
 						break;
 					}
 					case 1: {
 						pic = imread("찌.png", 1);
-						imshow("가위바위보", pic);
+						imshow("com", pic);
 						waitKey(20);
 						break;
 					}
 					case 2: {
 						pic = imread("빠.png", 1);
-						imshow("가위바위보", pic);
+						imshow("com", pic);
 						waitKey(20);
 						break;
 					}
