@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <iostream>
 #include <opencv2\core\core.hpp>
 #include <opencv2\highgui\highgui.hpp>
@@ -59,7 +59,7 @@ int main() {
 		if (key == 27) break;
 
 	}
-	
+
 	return 0;
 }
 
@@ -166,19 +166,19 @@ void track(int, void*) {
 
 					if ((user + 1) % 3 == com) {
 						strcpy_s(a, "Winner");
-						waitKey(10);
+						waitKey(400);
 						destroyWindow("com");
 						//break;
 					}
 					else if ((com + 1) % 3 == user) {
 						strcpy_s(a, "loser");
-						waitKey(10);
+						waitKey(400);
 						destroyWindow("com");
 						//break;
 					}
 					else {
 						strcpy_s(a, "again");
-						waitKey(10);
+						waitKey(400);
 						destroyWindow("com");
 					}
 					putText(image, a, Point(40, 40), FONT_HERSHEY_SIMPLEX, 3, Scalar(0, 255, 0), 3, 8, false);
