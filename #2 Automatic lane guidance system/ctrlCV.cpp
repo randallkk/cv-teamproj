@@ -1,4 +1,4 @@
-﻿#define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 
 #include <stdio.h>
 #include <iostream>
@@ -43,9 +43,11 @@ int main(int argc, char** argv)
 		Canny(image, contours, 125, 350);
 		// 선 감지 위한 허프 변환
 		vector<Vec2f> lines;
-		HoughLines(contours, lines, 1, PI / 180, 80); //  단계별 크기, 투표(vote) 최대 개수  수에 따른 변화 관찰 필요 60, 40 등	// 선 그리기
+		HoughLines(contours, lines, 1, PI / 180, 400); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
+													  
+		// 선 그리기
 		Mat result(contours.rows, contours.cols, CV_8U, Scalar(255));
-		cout << "Lines detected: " << lines.size() << endl;		// 선 벡터를 반복해 선 그리기
+		cout << "Lines detected: " << lines.size() << endl;		// 선 벡터를 반복해 선 그리기
 		vector<Vec2f>::const_iterator it = lines.begin();
 		while (it != lines.end()) {
 			float rho = (*it)[0]; // 첫 번째 요소는 rho 거리
@@ -70,4 +72,4 @@ int main(int argc, char** argv)
 		waitKey(0);
 	}
 	return 0;
-}
+}
