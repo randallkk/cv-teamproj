@@ -106,7 +106,8 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	Mat image;
+	Mat image, rectimg;
+	int x, y, w, h;
 
 	while (1)
 	{
@@ -117,11 +118,19 @@ int main(int argc, char** argv)
 			printf("empty image");
 			return 0;
 		}
-		namedWindow("Original Image");
-		imshow("Original Image", image);
+		x = image.cols / 4;
+		y = image.rows / 2;
+		w = image.cols / 2;
+		h = image.rows / 2;
+		Rect rect(x, y, w, h);
+		rectangle(image, rect, Scalar(255, 0, 0));
+		rectimg = image(rect);
+
+		namedWindow("Original image");
+		imshow("Original image", image);
 		// 캐니 알고리즘 적용
 		Mat contours;
-		Canny(image, contours, 125, 350);
+		Canny(rectimg, contours, 125, 350);
 		// 선 감지 위한 허프 변환
 		vector<Vec2f> lines;
 		HoughLines(contours, lines, 1, PI / 180, 400); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
