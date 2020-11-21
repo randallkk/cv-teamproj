@@ -58,9 +58,9 @@ int main(int argc, char** argv)
 		Scalar lower_yellow = Scalar(10, 100, 100); //노란색 차선 (HSV)
 		Scalar upper_yellow = Scalar(40, 255, 255);
 		inRange(hsv, lower_yellow, upper_yellow, mask2);
-
-		Scalar lower_blue = Scalar(110, 40, 70); //파란색 차선 (HSV)
-		Scalar upper_blue = Scalar(150, 100, 130);
+	
+		Scalar lower_blue = Scalar(90, 40, 70); //파란색 차선 (HSV)
+		Scalar upper_blue = Scalar(120, 100, 150);
 		inRange(hsv, lower_blue, upper_blue, mask3);
 
 		addWeighted(mask1, 1.0, mask2, 1.0, 0.0, contours);
