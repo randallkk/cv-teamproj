@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 		rectimg = image(rect);
 		// 캐니 알고리즘 적용
 		Mat contours;
-		Canny(image, contours, 125, 350);
+		Canny(rectimg, contours, 125, 350);
 		// 선 감지 위한 허프 변환
 		vector<Vec2f> lines;
 		HoughLines(contours, lines, 1, PI / 180, 400); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
@@ -66,17 +66,18 @@ int main(int argc, char** argv)
 				Point pt1(rho / cos(theta), 0); // 첫 행에서 해당 선의 교차점
 				Point pt2((rho - result.rows * sin(theta)) / cos(theta), result.rows);
 				// 마지막 행에서 해당 선의 교차점
-				line(image, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
+				line(rectimg, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
 			}
 			else { // 수평 행
 				Point pt1(0, rho / sin(theta)); // 첫 번째 열에서 해당 선의 교차점
 				Point pt2(result.cols, (rho - result.cols * cos(theta)) / sin(theta));
 				// 마지막 열에서 해당 선의 교차점
-				line(image, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
+				line(rectimg, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
 			}
 			cout << "line: (" << rho << "," << theta << ")\n";
 			++it;
 		}
+		rectimg.copyTo(image(rect));
 		namedWindow("Detected Lines with Hough");
 		imshow("Detected Lines with Hough", image);
 		if (waitKey(1) == 27) {
