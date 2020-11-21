@@ -25,7 +25,8 @@ int main(int argc, char** argv)
 		return -1;
 	}
 
-	Mat image;
+	Mat image, rectimg;
+	int x, y, w, h;
 
 	while (1)
 	{
@@ -36,16 +37,21 @@ int main(int argc, char** argv)
 			printf("empty image");
 			return 0;
 		}
-		namedWindow("Original Image");
-		imshow("Original Image", image);
+		Rect rect(x, y, w, h);	// 사각형 지정(x좌표, y좌표, 가로(오른쪽으로), 세로(아래로))
+		//x = 뫄뫄; y = 뫄뫄; w = 뫄뫄; h = 뫄뫄;
+		rectangle(image, rect, Scalar(255,0,0))	// 사각형 그리기(대상 이미지, 그릴 사각형, 색)
+		rectimg = image(rect);	// 관심영역 자르기 (Crop ROI)
+		namedWindow("Blackbox");
+		imshow("Blackbox", rectimg);
 		// 캐니 알고리즘 적용
 		Mat contours;
-		Canny(image, contours, 125, 350);
+		Canny(rectimg, contours, 125, 350);
 		// 선 감지 위한 허프 변환
 		vector<Vec2f> lines;
 		HoughLines(contours, lines, 1, PI / 180, 80); //  단계별 크기, 투표(vote) 최대 개수  수에 따른 변화 관찰 필요 60, 40 등	// 선 그리기
 		Mat result(contours.rows, contours.cols, CV_8U, Scalar(255));
-		cout << "Lines detected: " << lines.size() << endl;		// 선 벡터를 반복해 선 그리기
+		cout << "Lines detected: " << lines.size() << endl;
+		// 선 벡터를 반복해 선 그리기
 		vector<Vec2f>::const_iterator it = lines.begin();
 		while (it != lines.end()) {
 			float rho = (*it)[0]; // 첫 번째 요소는 rho 거리
@@ -54,20 +60,20 @@ int main(int argc, char** argv)
 				Point pt1(rho / cos(theta), 0); // 첫 행에서 해당 선의 교차점
 				Point pt2((rho - result.rows * sin(theta)) / cos(theta), result.rows);
 				// 마지막 행에서 해당 선의 교차점
-				line(image, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
+				line(rectimg, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
 			}
 			else { // 수평 행
 				Point pt1(0, rho / sin(theta)); // 첫 번째 열에서 해당 선의 교차점
 				Point pt2(result.cols, (rho - result.cols * cos(theta)) / sin(theta));
 				// 마지막 열에서 해당 선의 교차점
-				line(image, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
+				line(rectimg, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
 			}
 			cout << "line: (" << rho << "," << theta << ")\n";
 			++it;
 		}
 		namedWindow("Detected Lines with Hough");
-		imshow("Detected Lines with Hough", image);
+		imshow("Detected Lines with Hough", rectimg);
 		waitKey(0);
 	}
 	return 0;
-}
+}
