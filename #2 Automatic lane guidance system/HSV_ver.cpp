@@ -15,10 +15,6 @@ using namespace std;
 
 double PI = M_PI;
 
-Mat image, rectimg;
-int x, y, w, h;
-Mat contours, mask1, mask2, mask3, test, hsv;
-
 int main(int argc, char** argv)
 {
 	VideoCapture cap(argv[1]);
@@ -40,21 +36,27 @@ int main(int argc, char** argv)
 		}
 		namedWindow("Original image", WINDOW_NORMAL);
 		imshow("Original image", image);
-
-		x = image.size().width / 6;
-		y = image.size().height / 2;
-		w = image.size().width / 3 * 2;
-		h = image.size().height / 2;
+		x = 0;
+		//x = image.size().width / 8;
+		y = image.size().height / 5*3;
+		w = image.size().width ;
+		h = image.size().height / 5*2;
 
 		Rect rect(x, y, w, h);
 		rectangle(image, rect, Scalar(0, 255, 0));
 		rectimg = image(rect);	// ROI
+		GaussianBlur(rectimg, rectimg, Size(3, 3), 0);
+		imshow("g", rectimg);
 
-		// Scalar lower_white = Scalar(180, 180, 180); //흰색 차선 (RGB)
-				// Scalar upper_white = Scalar(255, 255, 255);
-		Scalar lower_white = Scalar(180, 255, 180);
+
+		Mat contours, mask1, mask2, mask3, test, hsv, color;
+
+		Scalar lower_white = Scalar(130, 130, 130);
 		Scalar upper_white = Scalar(255, 255, 255);
 		inRange(rectimg, lower_white, upper_white, mask1);
+		bitwise_and(rectimg, rectimg, test, mask1);
+		imshow("img", test);
+
 
 		cvtColor(rectimg, hsv, COLOR_BGR2HSV); //hsv변경
 
@@ -66,60 +68,57 @@ int main(int argc, char** argv)
 				//if (hsv.at<Vec3b>(y, x)[1] > 255) hsv.at<Vec3b>(y, x)[1] = 255;
 			}
 		}
-		
+
 		// Scalar lower_yellow = Scalar(10, 100, 100); //노란색 차선 (HSV)
 		// Scalar upper_yellow = Scalar(40, 255, 255);
-		Scalar lower_yellow = Scalar(10, 255, 100); //노란색 차선 (HSV)
-		Scalar upper_yellow = Scalar(40, 255, 255);
-		inRange(hsv, lower_yellow, upper_yellow, mask2);
-	
+		Scalar lower_yellow = Scalar(25, 170, 100); //노란색 차선 (HSV)
+		Scalar upper_yellow = Scalar(35, 255, 200);
+		//inRange(hsv, lower_yellow, upper_yellow, mask2);
+		//bitwise_and(rectimg, hsv, test, mask2);
+		//imshow("img", test);
+
 		// Scalar lower_blue = Scalar(90, 40, 70); //파란색 차선 (HSV)
 		//Scalar upper_blue = Scalar(120, 100, 150);
 		Scalar lower_blue = Scalar(90, 255, 70); //파란색 차선 (HSV)
 		Scalar upper_blue = Scalar(120, 255, 150);
 		inRange(hsv, lower_blue, upper_blue, mask3);
+		//bitwise_and(rectimg, hsv, test, mask3);
+		//imshow("img", test);
 
-		addWeighted(mask1, 1.0, mask2, 1.0, 0.0, contours);
-		addWeighted(contours, 1.0, mask3, 1.0, 0.0, contours);
+
+		addWeighted(mask1, 1.0, mask3, 1.0, 0.0, color);
+		imshow("blue", color);
 
 		//erode(contours, contours, Mat());
 		//Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
 		//morphologyEx(contours, contours, MorphTypes::MORPH_OPEN, element);
 
-		imshow("contour", contours);
+		//imshow("contour", contours);
 
 		//bitwise_and(image, hsv, test, mask3);
 		//imshow("img", image);
 		//imshow("blue_image", test);
 		//imshow("blue_mask", mask3);
 
-		Canny(contours, contours, 125, 350); 		// ROI에 캐니 알고리즘 적용
+		Canny(color, contours, 125, 350); 		// ROI에 캐니 알고리즘 적용
 		// 선 감지 위한 허프 변환
-		vector<Vec4i> lines;
-		HoughLinesP(contours, lines, 1, PI / 180, 300, 0, 0); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
+		imshow("caany", contours);
+		vector<Vec4i> lines; //선감지 마지막 점 포함 벡터
+		HoughLinesP(contours, lines, 1, PI / 180, 10, 0, 0); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
 
 		// 선 그리기
 		Mat result(contours.rows, contours.cols, CV_8U, Scalar(255));
 		cout << "Lines detected: " << lines.size() << endl;		// 선 벡터를 반복해 선 그리기
 		vector<Vec4i>::const_iterator it = lines.begin();
+
+
 		while (it != lines.end()) {
-			float rho = (*it)[0]; // 첫 번째 요소는 rho 거리
-			float theta = (*it)[1]; // 두 번째 요소는 델타 각도
-			if (theta < PI / 4. || theta > 3. * PI / 4.) { // 수직 행
-				Point pt1(rho / cos(theta), 0); // 첫 행에서 해당 선의 교차점
-				Point pt2((rho - result.rows * sin(theta)) / cos(theta), result.rows);
-				// 마지막 행에서 해당 선의 교차점
-				line(rectimg, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
-			}
-			else { // 수평 행
-				Point pt1(0, rho / sin(theta)); // 첫 번째 열에서 해당 선의 교차점
-				Point pt2(result.cols, (rho - result.cols * cos(theta)) / sin(theta));
-				// 마지막 열에서 해당 선의 교차점
-				line(rectimg, pt1, pt2, Scalar(255), 1); // 하얀 선으로 그리기
-			}
-			cout << "line: (" << rho << "," << theta << ")\n";
+			cv::Point pt1((*it)[0], (*it)[1]);
+			cv::Point pt2((*it)[2], (*it)[3]);
+			cv::line(rectimg, pt1, pt2, (255), 1);
 			++it;
 		}
+
 		rectimg.copyTo(image(rect));	// ROI 원래 이미지에 복붙
 		namedWindow("Detected Lines with Hough", WINDOW_NORMAL);
 		imshow("Detected Lines with Hough", image);
