@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 		//bitwise_and(rectimg, hsv, test, mask2);
 		//imshow("img", test);
 
-		Scalar lower_blue = Scalar(90, 180, 35); //파란색 차선 (HSV)
+		Scalar lower_blue = Scalar(90, 255, 70); //파란색 차선 (HSV)
 		Scalar upper_blue = Scalar(120, 255, 150);
 		inRange(hsv, lower_blue, upper_blue, mask3);
 		bitwise_and(rectimg, hsv, test, mask3);
@@ -94,8 +94,10 @@ int main(int argc, char** argv)
 		imshow("color", color);
 
 		//erode(contours, contours, Mat());
-		//Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
-		//morphologyEx(contours, contours, MorphTypes::MORPH_OPEN, element);
+		Mat element = getStructuringElement(MORPH_RECT, Size(5, 5));
+		morphologyEx(color, color, MorphTypes::MORPH_CLOSE, element);
+		morphologyEx(color, color, MorphTypes::MORPH_CLOSE, element);
+		morphologyEx(color, color, MorphTypes::MORPH_CLOSE, element);
 
 		//imshow("contour", contours);
 
@@ -108,7 +110,7 @@ int main(int argc, char** argv)
 		// 선 감지 위한 허프 변환
 		imshow("caany", contours);
 		vector<Vec4i> lines; //선감지 마지막 점 포함 벡터
-		HoughLinesP(contours, lines, 1, PI / 180, 10, 0, 0); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
+		HoughLinesP(contours, lines, 1, PI / 180, 100, 50, 100); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
 
 		// 선 그리기
 		Mat result(contours.rows, contours.cols, CV_8U, Scalar(255));
@@ -119,7 +121,7 @@ int main(int argc, char** argv)
 		while (it != lines.end()) {
 			cv::Point pt1((*it)[0], (*it)[1]);
 			cv::Point pt2((*it)[2], (*it)[3]);
-			cv::line(rectimg, pt1, pt2, (255), 1);
+			cv::line(rectimg, pt1, pt2, Scalar(0,0,255), 3);
 			++it;
 		}
 
