@@ -93,10 +93,10 @@ int main(int argc, char** argv)
 		//imshow("blue_image", test);
 		//imshow("blue_mask", mask3);
 
-		Canny(rectimg, contours, 125, 350); 		// ROI에 캐니 알고리즘 적용
+		Canny(contours, contours, 125, 350); 		// ROI에 캐니 알고리즘 적용
 		// 선 감지 위한 허프 변환
 		vector<Vec4i> lines;
-		HoughLinesP(contours, lines, 1, PI / 180, 300, h/2, 50); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
+		HoughLinesP(contours, lines, 1, PI / 180, 300, 0, 0); //  단계별 크기, 투표(vote) 최대 개수, 수에 따른 변화 관찰 필요 //400으로 바꿈~~
 
 		// 선 그리기
 		Mat result(contours.rows, contours.cols, CV_8U, Scalar(255));
