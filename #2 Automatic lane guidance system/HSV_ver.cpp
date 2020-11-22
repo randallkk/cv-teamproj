@@ -15,6 +15,10 @@ using namespace std;
 
 double PI = M_PI;
 
+Mat image, rectimg;
+int x, y, w, h;
+Mat contours, mask1, mask2, mask3, test, hsv;
+
 int main(int argc, char** argv)
 {
 	VideoCapture cap(argv[1]);
@@ -24,9 +28,6 @@ int main(int argc, char** argv)
 		printf("Can't open the video");
 		return -1;
 	}
-
-	Mat image, rectimg;
-	int x, y, w, h;
 
 	while (1)
 	{
@@ -48,8 +49,6 @@ int main(int argc, char** argv)
 		Rect rect(x, y, w, h);
 		rectangle(image, rect, Scalar(0, 255, 0));
 		rectimg = image(rect);	// ROI
-
-		Mat contours, mask1, mask2, mask3, test, hsv;
 
 		// Scalar lower_white = Scalar(180, 180, 180); //흰색 차선 (RGB)
 				// Scalar upper_white = Scalar(255, 255, 255);
