@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 		imshow("g", rectimg);
 
 
-		Mat contours, mask1, mask2, mask3, test, hsv;
+		Mat contours, mask1, mask2, mask3, test, hsv, color;
 
 		Scalar lower_white = Scalar(130, 130, 130);
 		Scalar upper_white = Scalar(255, 255, 255);
@@ -90,7 +90,8 @@ int main(int argc, char** argv)
 		//imshow("img", test);
 
 
-		addWeighted(mask1, 1.0, mask3, 1.0, 0.0, contours);
+		addWeighted(mask1, 1.0, mask3, 1.0, 0.0, color);
+		imshow("blue", color);
 
 		//erode(contours, contours, Mat());
 		//Mat element = getStructuringElement(MORPH_RECT, Size(1, 1));
@@ -103,7 +104,7 @@ int main(int argc, char** argv)
 		//imshow("blue_image", test);
 		//imshow("blue_mask", mask3);
 
-		Canny(rectimg, contours, 125, 350); 		// ROI에 캐니 알고리즘 적용
+		Canny(color, contours, 125, 350); 		// ROI에 캐니 알고리즘 적용
 		// 선 감지 위한 허프 변환
 		imshow("caany", contours);
 		vector<Vec4i> lines; //선감지 마지막 점 포함 벡터
