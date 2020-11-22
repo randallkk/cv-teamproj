@@ -81,9 +81,7 @@ int main(int argc, char** argv)
 		//bitwise_and(rectimg, hsv, test, mask2);
 		//imshow("img", test);
 
-		// Scalar lower_blue = Scalar(90, 40, 70); //파란색 차선 (HSV)
-		//Scalar upper_blue = Scalar(120, 100, 150);
-		Scalar lower_blue = Scalar(90, 255, 70); //파란색 차선 (HSV)
+		Scalar lower_blue = Scalar(90, 180, 35); //파란색 차선 (HSV)
 		Scalar upper_blue = Scalar(120, 255, 150);
 		inRange(hsv, lower_blue, upper_blue, mask3);
 		bitwise_and(rectimg, hsv, test, mask3);
